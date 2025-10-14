@@ -32,7 +32,7 @@ include '../header.php';
         </div>
         <input type="hidden" name="next" value="<?php echo esc($next); ?>">
         <div class="d-flex justify-content-between align-items-center">
-          <a href="../index.php" class="btn btn-outline-secondary">Kembali</a>
+          <a href="../index.php" class="btn btn-primary">Kembali</a>
           <button class="btn btn-primary">Masuk</button>
         </div>
         <div class="small text-muted mt-2">Default: <code><?php echo esc(ADMIN_USER); ?></code> / <code><?php echo esc(ADMIN_PASS); ?></code> — ganti di <code>config.php</code>.</div>

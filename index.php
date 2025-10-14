@@ -154,7 +154,7 @@
           <div class="divider"></div>
           <p class="mb-1"><i class="fa-solid fa-location-dot me-2 text-primary"></i>Kp. Pitara Rangkapanjaya Kota Depok</p>
           <p class="mb-1"><i class="fa-solid fa-clock me-2 text-primary"></i>Jam Operasional: <strong>Senin - Sabtu, 10:00 - 21:00 WIB</strong></p>
-          <p class="mb-1"><i class="fa-solid fa-phone me-2 text-primary"></i>No. Telepon: <a href="tel:087874872257" class="text-decoration-none">087874872257</a></p>
+          <p class="mb-1"><i class="fa-solid fa-phone me-2 text-primary"></i>No. Telepon: <strong><a href="tel:087874872257" class="text-decoration-primary">087874872257</a></strong></p>
           <a class="btn btn-sm btn-outline-success mt-2" href="https://wa.me/6287874872257" target="_blank">
             <i class="fa-brands fa-whatsapp me-1"></i> Chat WhatsApp
           </a>
@@ -189,15 +189,15 @@
           <div class="carousel-item <?php echo $i===0?'active':''; ?>">
             <?php if($p['image_path']): ?>
               <div class="ratio ratio-21x9">
-                <img src="<?php echo esc($p['image_path']); ?>" class="w-100 h-100" style="object-fit:cover;" alt="<?php echo esc($p['name']); ?>">
+                <img src="<?php echo esc($p['image_path']); ?>" class="w-90 h-90" style="object-fit:cover;" alt="<?php echo esc($p['name']); ?>">
               </div>
             <?php else: ?>
-              <div class="bg-light" style="height:420px; display:flex; align-items:center; justify-content:center;">
+              <div class="bg-light" style="height:120px; display:flex; align-items:center; justify-content:center;">
                 <div class="text-muted">Belum ada gambar</div>
               </div>
             <?php endif; ?>
-            <div class="carousel-caption d-none d-md-block text-start bg-dark bg-opacity-50 rounded p-3 m-3">
-              <h5 class="mb-1"><?php echo esc($p['name']); ?> <span class="fw-normal text-warning"><?php echo formatRupiah($p['price']); ?></span></h5>
+            <div class="carousel-caption d-none d-md-block text-start bg-white bg-opacity-50 rounded p-3 m-3">
+              <h5 class="mb-1"><?php echo esc($p['name']); ?> <span class="fw-normal text-primary"><?php echo formatRupiah($p['price']); ?></span></h5>
               <p class="small mb-2"><?php echo esc($p['description']); ?></p>
               <a class="btn btn-sm btn-primary"
                  onclick="addToCart(<?php echo $p['id']; ?>, '<?php echo esc(trim(explode(',', $p['sizes'])[0] ?? 'M')); ?>', 1)">

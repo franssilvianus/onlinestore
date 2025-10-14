@@ -15,7 +15,7 @@ function ensureModal(){
             <div class="modal-body">Produk masuk ke keranjang.</div>
             <div class="modal-footer">
               <a href="cart.php" class="btn btn-primary">Lihat Keranjang</a>
-              <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Lanjut Belanja</button>
+              <button class="btn btn-primary" data-bs-dismiss="modal">Lanjut Belanja</button>
             </div>
           </div>
         </div>
@@ -53,11 +53,11 @@ function selectSize(pid, el, size){
   if (container){
     container.querySelectorAll('.badge-size').forEach(b=>{
       b.classList.remove('bg-dark','text-white');
-      b.classList.add('bg-light','text-dark');
+      b.classList.add('bg-dark','text-white','bg-light','text-dark');
     });
   }
   el.classList.remove('bg-light','text-dark');
-  el.classList.add('bg-dark','text-white');
+  el.classList.add('bg-light','text-dark','bg-dark','text-white');
 }
 </script>
 
@@ -72,7 +72,7 @@ function selectSize(pid, el, size){
       <div class="modal-body">Produk masuk ke keranjang.</div>
       <div class="modal-footer">
         <a href="cart.php" class="btn btn-primary">Lihat Keranjang</a>
-        <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Lanjut Belanja</button>
+        <button class="btn btn-primary" data-bs-dismiss="modal">Lanjut Belanja</button>
       </div>
     </div>
   </div>

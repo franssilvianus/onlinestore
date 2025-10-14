@@ -36,7 +36,7 @@ if(($action==='new') || ($action==='edit' && isset($_GET['id']))):
   $prod = ['name'=>'','description'=>'','price'=>'','sizes'=>'S,M,L,XL','image_path'=>'','is_best_seller'=>0];
   if($action==='edit'){ $prod = getProduct((int)$_GET['id']); }
 ?>
-<div class="card admin-card h-100 p-3">
+<div class="card admin-card h-100 p-3 mb-4">
   <form method="post" enctype="multipart/form-data" action="products.php?action=<?php echo $action==='new'?'create':'update&id='.(int)($_GET['id']??0); ?>">
     <div class="row g-3">
       <div class="col-md-6">
@@ -77,7 +77,7 @@ if(($action==='new') || ($action==='edit' && isset($_GET['id']))):
       </div>
       <div class="col-12">
         <button class="btn btn-primary"><?php echo $action==='new'?'Simpan':'Update'; ?></button>
-        <a href="products.php" class="btn btn-outline-secondary">Batal</a>
+        <a href="products.php" class="btn btn-primary">Batal</a>
       </div>
     </div>
   </form>

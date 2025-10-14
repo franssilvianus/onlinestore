@@ -36,7 +36,7 @@ $total = 0; ?>
   </table>
   </div>
   <div class="d-flex justify-content-between">
-    <a class="btn btn-outline-secondary" href="index.php">Lanjut Belanja</a>
+    <a class="btn btn-primary" href="index.php">Lanjut Belanja</a>
     <div>
       <span class="me-3 fw-bold fs-5">Total: <?php echo formatRupiah($total); ?></span>
       <button class="btn btn-primary">Update Keranjang</button>
