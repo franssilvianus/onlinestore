@@ -114,15 +114,15 @@ $waLink = 'https://api.whatsapp.com/send/?phone='.$phoneAdmin.'&text='.rawurlenc
   </div>
 
   <div class="d-flex flex-wrap gap-2">
-  <a id="btnOpenInvoice" class="btn btn-outline-primary" target="_blank" href="invoice.php?no=<?php echo urlencode($orderNo); ?>">
+  <!-- <a id="btnOpenInvoice" class="btn btn-outline-primary" target="_blank" href="invoice.php?no=<?php echo urlencode($orderNo); ?>">
     <i class="fa fa-file-invoice"></i> Buka Invoice
-  </a>
+  </a> -->
   <a id="btnOpenWA" class="btn btn-success" target="_blank" href="<?php echo $waLink; ?>">
     <i class="fa-brands fa-whatsapp"></i> Kirim ke WhatsApp
   </a>
   <a class="btn btn-primary" href="index.php">Belanja Lagi</a>
   <div class="btn-group">
-    <button class="btn btn-outline-secondary dropdown-toggle" id="btnInvoiceDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+    <button class="btn btn-primary dropdown-toggle" id="btnInvoiceDropdown" data-bs-toggle="dropdown" aria-expanded="false">
       <i class="fa fa-file-invoice"></i> Invoice
     </button>
     <ul class="dropdown-menu">

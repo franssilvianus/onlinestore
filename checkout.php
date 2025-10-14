@@ -39,7 +39,7 @@ foreach($cart as $item){ $subtotal += $item['price'] * $item['qty']; }
           </tfoot>
         </table>
       </div>
-      <a href="cart.php" class="btn btn-outline-secondary">Kembali ke Keranjang</a>
+      <a href="cart.php" class="btn btn-primary">Kembali ke Keranjang</a>
     </div>
   </div>
 
