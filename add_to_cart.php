@@ -26,6 +26,8 @@ if(isset($_SESSION['cart'][$key])){
     'price'=>$p['price'],
     'size'=>$size,
     'image'=>$p['image_path'],
+    'seller_id'=>(int)($p['seller_id'] ?? 0),
+    'seller_name'=>$p['seller_name'] ?? '',
     'qty'=>$qty
   ];
 }

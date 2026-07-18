@@ -48,6 +48,22 @@ $lastOrder = [
 ];
 $_SESSION['last_order'] = $lastOrder;
 
+createOrder([
+  'order_no' => $orderNo,
+  'customer_name' => $_POST['full_name'],
+  'customer_phone' => $_POST['phone'],
+  'customer_address' => $_POST['address'],
+  'customer_city' => $_POST['city'],
+  'customer_province' => $_POST['province'],
+  'customer_postal_code' => $_POST['postal_code'],
+  'customer_notes' => $_POST['notes'] ?? '',
+  'courier' => $courier,
+  'service' => $service,
+  'subtotal' => $subtotal,
+  'shipping_cost' => $shipping,
+  'total' => $total,
+], array_values($cart));
+
 // ===== WhatsApp message =====
 require_once __DIR__.'/config.php';
 $phoneAdmin = defined('WHATSAPP_PHONE') ? WHATSAPP_PHONE : '+6287874872257';
@@ -61,7 +77,8 @@ $lines[] = 'Alamat: ' . trim($_POST['address'].' '.$_POST['city'].' '.$_POST['pr
 $lines[] = '';
 $lines[] = '*Rincian Pesanan:*';
 foreach($cart as $it){
-  $lines[] = '- ' . ((int)$it['qty']) . 'x ' . $it['name'] . ' (Ukuran: ' . $it['size'] . ')';
+  $sellerText = !empty($it['seller_name']) ? ' [Seller: ' . $it['seller_name'] . ']' : '';
+  $lines[] = '- ' . ((int)$it['qty']) . 'x ' . $it['name'] . ' (Ukuran: ' . $it['size'] . ')' . $sellerText;
 }
 $lines[] = '';
 $lines[] = 'Subtotal: ' . formatRupiah($subtotal);
@@ -98,11 +115,12 @@ $waLink = 'https://api.whatsapp.com/send/?phone='.$phoneAdmin.'&text='.rawurlenc
 
   <div class="table-responsive mt-3">
     <table class="table">
-      <thead><tr><th>Produk</th><th>Ukuran</th><th class="text-end">Harga</th><th class="text-center">Qty</th><th class="text-end">Subtotal</th></tr></thead>
+      <thead><tr><th>Produk</th><th>Seller</th><th>Ukuran</th><th class="text-end">Harga</th><th class="text-center">Qty</th><th class="text-end">Subtotal</th></tr></thead>
       <tbody>
       <?php foreach($cart as $item): $st = $item['price'] * $item['qty']; ?>
         <tr>
           <td><?php echo esc($item['name']); ?></td>
+          <td><?php echo !empty($item['seller_name']) ? esc($item['seller_name']) : '-'; ?></td>
           <td><?php echo esc($item['size']); ?></td>
           <td class="text-end"><?php echo formatRupiah($item['price']); ?></td>
           <td class="text-center"><?php echo (int)$item['qty']; ?></td>

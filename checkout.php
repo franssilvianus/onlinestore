@@ -8,58 +8,67 @@ if(!$cart){
 $subtotal = 0;
 foreach($cart as $item){ $subtotal += $item['price'] * $item['qty']; }
 ?>
-<div class="row g-4">
+<div class="row g-3 align-items-start">
   <div class="col-lg-7">
     <div class="card p-3">
-      <h4 class="mb-3">Ringkasan Pesanan</h4>
+      <h4 class="mb-2">Ringkasan Pesanan</h4>
       <div class="table-responsive">
-        <table class="table align-middle">
-          <thead><tr><th>Produk</th><th>Ukuran</th><th class="text-end">Harga</th><th class="text-center">Qty</th><th class="text-end">Subtotal</th></tr></thead>
+        <table class="table table-sm align-middle mb-2" style="table-layout: fixed; width: 100%;">
+          <colgroup>
+            <col style="width: 34%;">
+            <col style="width: 18%;">
+            <col style="width: 12%;">
+            <col style="width: 12%;">
+            <col style="width: 8%;">
+            <col style="width: 16%;">
+          </colgroup>
+          <thead><tr><th>Produk</th><th>Seller</th><th>Ukuran</th><th class="text-end">Harga</th><th class="text-center">Qty</th><th class="text-end">Subtotal</th></tr></thead>
           <tbody>
           <?php foreach($cart as $item): $st = $item['price'] * $item['qty']; ?>
             <tr>
               <td>
-                <div class="d-flex align-items-center">
-                  <?php if($item['image']): ?><img src="<?php echo esc($item['image']); ?>" width="50" class="rounded me-2"><?php endif; ?>
-                  <div><?php echo esc($item['name']); ?></div>
+                <div class="d-flex align-items-center gap-2">
+                  <?php if($item['image']): ?><img src="<?php echo esc($item['image']); ?>" width="44" class="rounded" style="object-fit:cover; height:44px; flex-shrink:0;"><?php endif; ?>
+                  <div class="small fw-semibold" style="word-break: break-word;"><?php echo esc($item['name']); ?></div>
                 </div>
               </td>
-              <td><?php echo esc($item['size']); ?></td>
-              <td class="text-end"><?php echo formatRupiah($item['price']); ?></td>
-              <td class="text-center"><?php echo (int)$item['qty']; ?></td>
-              <td class="text-end"><?php echo formatRupiah($st); ?></td>
+              <td class="small"><?php echo !empty($item['seller_name']) ? esc($item['seller_name']) : '-'; ?></td>
+              <td class="small"><?php echo esc($item['size']); ?></td>
+              <td class="text-end small"><?php echo formatRupiah($item['price']); ?></td>
+              <td class="text-center small"><?php echo (int)$item['qty']; ?></td>
+              <td class="text-end small"><?php echo formatRupiah($st); ?></td>
             </tr>
           <?php endforeach; ?>
           </tbody>
           <tfoot>
             <tr>
-              <th colspan="4" class="text-end">Subtotal</th>
+              <th colspan="5" class="text-end">Subtotal</th>
               <th class="text-end"><?php echo formatRupiah($subtotal); ?></th>
             </tr>
           </tfoot>
         </table>
       </div>
-      <a href="cart.php" class="btn btn-primary">Kembali ke Keranjang</a>
+      <a href="cart.php" class="btn btn-primary btn-sm">Kembali ke Keranjang</a>
     </div>
   </div>
 
   <div class="col-lg-5">
     <div class="card p-3">
-      <h4 class="mb-3">Alamat Pengiriman</h4>
+      <h4 class="mb-2">Alamat Pengiriman</h4>
       <form method="post" action="place_order.php" novalidate>
-        <div class="mb-3">
+        <div class="mb-2">
           <label class="form-label">Nama Lengkap</label>
           <input type="text" class="form-control" name="full_name" required>
         </div>
-        <div class="mb-3">
+        <div class="mb-2">
           <label class="form-label">No. HP / WA</label>
           <input type="tel" class="form-control" name="phone" required>
         </div>
-        <div class="mb-3">
+        <div class="mb-2">
           <label class="form-label">Alamat Lengkap</label>
           <textarea class="form-control" name="address" rows="3" required></textarea>
         </div>
-        <div class="row g-3">
+        <div class="row g-2">
           <div class="col-md-6">
             <label class="form-label">Kota / Kabupaten</label>
             <input type="text" class="form-control" name="city" required>
@@ -69,7 +78,7 @@ foreach($cart as $item){ $subtotal += $item['price'] * $item['qty']; }
             <input type="text" class="form-control" name="province" required>
           </div>
         </div>
-        <div class="row g-3 mt-1">
+        <div class="row g-2 mt-1">
           <div class="col-md-6">
             <label class="form-label">Kode Pos</label>
             <input type="text" class="form-control" name="postal_code" required>
@@ -80,7 +89,7 @@ foreach($cart as $item){ $subtotal += $item['price'] * $item['qty']; }
           </div>
         </div>
 
-        <div class="row g-3 mt-3">
+        <div class="row g-2 mt-2">
           <div class="col-md-6">
             <label class="form-label">Kurir</label>
             <select class="form-select" name="courier" id="courier" required>
@@ -96,17 +105,17 @@ foreach($cart as $item){ $subtotal += $item['price'] * $item['qty']; }
         </div>
         <input type="hidden" name="shipping_cost" id="shipping_cost" value="0">
 
-        <div class="border-top mt-3 pt-3">
+        <div class="border-top mt-2 pt-2">
           <div class="d-flex justify-content-between"><span>Subtotal</span><strong id="subtotal_text"><?php echo formatRupiah($subtotal); ?></strong></div>
           <div class="d-flex justify-content-between"><span>Ongkir</span><strong id="shipping_text">Rp 0</strong></div>
           <hr>
           <div class="d-flex justify-content-between fs-5"><span>Total</span><strong id="total_text"><?php echo formatRupiah($subtotal); ?></strong></div>
-          <div class="mt-3 d-flex justify-content-end">
-            <button class="btn btn-success">Buat Pesanan</button>
+          <div class="mt-2 d-flex justify-content-end">
+            <button class="btn btn-success btn-sm">Buat Pesanan</button>
           </div>
         </div>
       </form>
-      <div class="small text-muted mt-2">* Ongkir dihitung sederhana (flat-rate). Bisa dihubungkan ke API kurir nanti.</div>
+      <div class="small text-muted mt-2">* Ongkir dihitung sederhana (flat-rate).</div>
     </div>
   </div>
 </div>

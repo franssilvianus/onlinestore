@@ -26,14 +26,18 @@ try{
 <?php include '../header.php'; ?>
 <div class="d-flex justify-content-between align-items-center mb-3">
   <h3>Produk (Admin)</h3>
-  <a href="products.php?action=new" class="btn btn-primary"><i class="fa fa-plus"></i> Produk Baru</a>
+  <div class="d-flex gap-2">
+    <a href="sellers.php" class="btn btn-outline-secondary"><i class="fa fa-store"></i> Kelola Seller</a>
+    <a href="products.php?action=new" class="btn btn-primary"><i class="fa fa-plus"></i> Produk Baru</a>
+  </div>
 </div>
 <?php if($error): ?><div class="alert alert-danger"><?php echo esc($error); ?></div><?php endif; ?>
 <?php if(isset($_GET['msg'])): ?><div class="alert alert-success">Sukses <?php echo esc($_GET['msg']); ?>.</div><?php endif; ?>
 
 <?php
+$sellers = getSellers();
 if(($action==='new') || ($action==='edit' && isset($_GET['id']))):
-  $prod = ['name'=>'','description'=>'','price'=>'','sizes'=>'All Size,S,M,L,XL','image_path'=>'','is_best_seller'=>0];
+  $prod = ['name'=>'','description'=>'','price'=>'','sizes'=>'All Size,S,M,L,XL','image_path'=>'','seller_id'=>null,'is_best_seller'=>0];
   if($action==='edit'){ $prod = getProduct((int)$_GET['id']); }
 ?>
 <div class="card admin-card h-100 p-3 mb-4">
@@ -53,6 +57,18 @@ if(($action==='new') || ($action==='edit' && isset($_GET['id']))):
           <input class="form-check-input" type="checkbox" name="is_best_seller" value="1" <?php echo !empty($prod['is_best_seller'])?'checked':''; ?>>
           <label class="form-check-label">Best Seller</label>
         </div>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Seller</label>
+        <select class="form-select" name="seller_id">
+          <option value="">-- Tidak ada seller (Admin sendiri) --</option>
+          <?php foreach($sellers as $seller): ?>
+            <option value="<?php echo (int)$seller['id']; ?>" <?php echo (!empty($prod['seller_id']) && (int)$prod['seller_id'] === (int)$seller['id']) ? 'selected' : ''; ?>>
+              <?php echo esc($seller['name']); ?>
+            </option>
+          <?php endforeach; ?>
+        </select>
+        <div class="form-text">Bisa dikosongkan kalau admin ingin jualan sendiri.</div>
       </div>
       <div class="col-12">
         <label class="form-label">Ukuran Tersedia</label>
@@ -91,6 +107,7 @@ if(($action==='new') || ($action==='edit' && isset($_GET['id']))):
           <?php if($p['image_path']): ?><div class="thumb-box"><img class="product-thumb" src="../<?php echo esc($p['image_path']); ?>" width="90" class="rounded me-3"><?php endif; ?>
           <div class="flex-grow-1">
             <div class="fw-bold"><?php echo esc($p['name']); ?> <span class="text-muted">— <?php echo formatRupiah($p['price']); ?></span></div>
+            <div class="small text-muted">Seller: <?php echo esc(!empty($p['seller_name']) ? $p['seller_name'] : '-'); ?></div>
             <div class="small text-muted mb-2">Ukuran: <?php echo esc($p['sizes']); ?></div>
             <div>
               <a class="btn btn-sm btn-outline-primary" href="products.php?action=edit&id=<?php echo $p['id']; ?>"><i class="fa fa-pen"></i> Edit</a>

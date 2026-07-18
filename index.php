@@ -1,4 +1,4 @@
-<?php include 'header.php'; ?>
+<?php include 'header.php'; $sellerFilter = isset($_GET['seller_id']) ? (int)$_GET['seller_id'] : 0; $sellers = getSellers(); $products = getProducts($sellerFilter > 0 ? $sellerFilter : null); ?>
 
 <!-- Rebelstuff Hero -->
 <section class="mb-5">
@@ -12,10 +12,12 @@
           <span class="badge pill-badge">Bahan Ramah Lingkungan</span>
           <span class="badge pill-badge">Zero Waste Mindset</span>
         </div>
-        <div class="d-flex gap-2">
+        <div class="d-flex gap-2 flex-wrap">
           <a href="#shop" class="btn btn-light btn-lg"><i class="fa fa-cart-plus me-1"></i> Jelajahi Produk</a>
           <a href="#about" class="btn btn-outline-light btn-lg">Kenapa Kami</a>
+          <a href="seller_login.php" class="btn btn-success btn-lg">Login Seller</a>
         </div>
+        <div class="small mt-2" style="opacity:0.9;">Demo seller: <strong>sellerdemo</strong> / <strong>seller123</strong></div>
       </div>
       <div class="col-lg-5">
         <div class="glass-card rounded-4 p-3 p-md-4 grid-icons">
@@ -243,10 +245,22 @@
 
 <!-- Pilih Model & Ukuran -->
 <section class="mt-4" id="shop">
-  <h3 class="mb-3">Pilih Produk Daur Ulang</h3>
-  <p class="text-muted mb-3">Temukan item favorit Anda yang dibuat dengan nilai estetika, kualitas, dan tanggung jawab lingkungan.</p>
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+    <div>
+      <h3 class="mb-1">Pilih Produk Daur Ulang</h3>
+      <p class="text-muted mb-0">Temukan item favorit Anda yang dibuat dengan nilai estetika, kualitas, dan tanggung jawab lingkungan.</p>
+    </div>
+    <div class="d-flex flex-wrap gap-2">
+      <a class="btn btn-sm <?php echo $sellerFilter > 0 ? 'btn-outline-success' : 'btn-success'; ?>" href="index.php#shop">Semua Seller</a>
+      <?php foreach($sellers as $seller): ?>
+        <a class="btn btn-sm <?php echo $sellerFilter === (int)$seller['id'] ? 'btn-success' : 'btn-outline-success'; ?>" href="index.php?seller_id=<?php echo (int)$seller['id']; ?>#shop">
+          <?php echo esc($seller['name']); ?>
+        </a>
+      <?php endforeach; ?>
+    </div>
+  </div>
   <div class="row g-3">
-  <?php $products = $products ?? getProducts(); if(!$products): ?>
+  <?php if(!$products): ?>
     <div class="col-12">
       <div class="alert alert-info">Belum ada produk. <a href="admin/products.php">Tambah sekarang</a>.</div>
     </div>
@@ -263,6 +277,12 @@
             <?php if($isNew): ?><span class="badge bg-success-subtle text-success-emphasis">New</span><?php endif; ?>
           </div>
           <h5 class="card-title"><?php echo esc($p['name']); ?></h5>
+          <?php if(!empty($p['seller_name'])): ?>
+            <div class="small text-muted mb-2">
+              <i class="fa-solid fa-store me-1"></i>
+              <a class="text-decoration-none" href="seller.php?id=<?php echo (int)$p['seller_id']; ?>"><?php echo esc($p['seller_name']); ?></a>
+            </div>
+          <?php endif; ?>
           <p class="text-muted small flex-grow-1"><?php echo esc($p['description']); ?></p>
           <div class="mb-2 fw-semibold"><?php echo formatRupiah($p['price']); ?></div>
           <div class="mb-2">

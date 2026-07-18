@@ -97,11 +97,12 @@ body{background:linear-gradient(180deg,#f9fcf3 0%,var(--bg) 100%); color:var(--t
   <div class="card p-3">
     <div class="table-responsive">
       <table class="table">
-        <thead><tr><th>Produk</th><th class="text-center">Ukuran</th><th class="text-end">Harga</th><th class="text-center">Qty</th><th class="text-end">Subtotal</th></tr></thead>
+        <thead><tr><th>Produk</th><th>Seller</th><th class="text-center">Ukuran</th><th class="text-end">Harga</th><th class="text-center">Qty</th><th class="text-end">Subtotal</th></tr></thead>
         <tbody>
         <?php foreach($order['items'] as $it): $st = $it['price'] * $it['qty']; ?>
           <tr>
             <td><?php echo esc($it['name']); ?></td>
+            <td><?php echo !empty($it['seller_name']) ? esc($it['seller_name']) : '-'; ?></td>
             <td class="text-center"><?php echo esc($it['size']); ?></td>
             <td class="text-end"><?php echo formatRupiah($it['price']); ?></td>
             <td class="text-center"><?php echo (int)$it['qty']; ?></td>
@@ -110,9 +111,9 @@ body{background:linear-gradient(180deg,#f9fcf3 0%,var(--bg) 100%); color:var(--t
         <?php endforeach; ?>
         </tbody>
         <tfoot>
-          <tr><th colspan="4" class="text-end">Subtotal</th><th class="text-end"><?php echo formatRupiah($order['subtotal']); ?></th></tr>
-          <tr><th colspan="4" class="text-end">Ongkir (<?php echo esc($order['courier'].' - '.$order['service']); ?>)</th><th class="text-end"><?php echo formatRupiah($order['shipping']); ?></th></tr>
-          <tr><th colspan="4" class="text-end">Total</th><th class="text-end"><?php echo formatRupiah($order['total']); ?></th></tr>
+          <tr><th colspan="5" class="text-end">Subtotal</th><th class="text-end"><?php echo formatRupiah($order['subtotal']); ?></th></tr>
+          <tr><th colspan="5" class="text-end">Ongkir (<?php echo esc($order['courier'].' - '.$order['service']); ?>)</th><th class="text-end"><?php echo formatRupiah($order['shipping']); ?></th></tr>
+          <tr><th colspan="5" class="text-end">Total</th><th class="text-end"><?php echo formatRupiah($order['total']); ?></th></tr>
         </tfoot>
       </table>
     </div>

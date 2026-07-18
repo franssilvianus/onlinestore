@@ -370,6 +370,96 @@ require_once __DIR__ . '/functions.php';
     .card li {
       color: #111;
     }
+
+    .container {
+      max-width: 1200px;
+    }
+
+    .navbar {
+      box-shadow: 0 6px 16px rgba(47, 107, 63, .08) !important;
+      padding: .7rem 0;
+    }
+
+    .navbar-brand img {
+      display: block;
+      max-height: 40px;
+    }
+
+    .nav-link {
+      font-weight: 600;
+      color: #223426 !important;
+      padding: .6rem .85rem !important;
+      border-radius: 999px;
+      transition: background .2s ease, color .2s ease;
+    }
+
+    .nav-link:hover {
+      background: var(--accent-soft);
+      color: var(--accent) !important;
+    }
+
+    .btn {
+      border-radius: 999px;
+      font-weight: 600;
+      padding: .65rem 1rem;
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-sm {
+      padding: .4rem .75rem;
+    }
+
+    .form-control,
+    .form-select,
+    .form-check-input {
+      border-radius: 12px;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 .2rem rgba(47, 107, 63, .16);
+    }
+
+    .table {
+      border-collapse: separate;
+      border-spacing: 0;
+      background: #fff;
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .table thead th {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+      color: #fff;
+      border: 0;
+      font-weight: 600;
+      letter-spacing: .2px;
+    }
+
+    .table td,
+    .table th {
+      padding: .8rem .9rem;
+      vertical-align: middle;
+      border-color: #e8efe0;
+    }
+
+    .table tbody tr:nth-child(even) {
+      background: #fafdf6;
+    }
+
+    .table-hover tbody tr:hover {
+      background: #f3f8e7;
+    }
+
+    .alert {
+      border-radius: 14px;
+      border: 1px solid var(--border);
+    }
   </style>
 </head>
 <?php $BASE_PATH = (strpos($_SERVER['PHP_SELF'], '/admin/') !== false) ? '../' : ''; ?>

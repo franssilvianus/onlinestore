@@ -10,7 +10,7 @@ $total = 0; ?>
   <div class="table-responsive">
   <table class="table align-middle">
     <thead>
-      <tr><th>Produk</th><th>Ukuran</th><th>Harga</th><th>Qty</th><th>Subtotal</th><th></th></tr>
+      <tr><th>Produk</th><th>Seller</th><th>Ukuran</th><th>Harga</th><th>Qty</th><th>Subtotal</th><th></th></tr>
     </thead>
     <tbody>
     <?php foreach($cart as $k=>$item):
@@ -20,9 +20,12 @@ $total = 0; ?>
         <td>
           <div class="d-flex align-items-center">
             <?php if($item['image']): ?><img src="<?php echo esc($item['image']); ?>" width="60" class="rounded me-2"><?php endif; ?>
-            <div><?php echo esc($item['name']); ?></div>
+            <div>
+              <div><?php echo esc($item['name']); ?></div>
+            </div>
           </div>
         </td>
+        <td><?php echo !empty($item['seller_name']) ? esc($item['seller_name']) : '-'; ?></td>
         <td><?php echo esc($item['size']); ?></td>
         <td><?php echo formatRupiah($item['price']); ?></td>
         <td style="max-width:120px;">
