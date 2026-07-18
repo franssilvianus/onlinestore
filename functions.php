@@ -40,7 +40,7 @@ function addProduct($data, $file){
   if(isset($file['image']) && $file['image']['error']===UPLOAD_ERR_OK){
     $imagePath = handleUpload($file['image']);
   }
-  $sizes = isset($data['sizes']) ? implode(',', $data['sizes']) : 'S,M,L,XL';
+  $sizes = isset($data['sizes']) ? implode(',', $data['sizes']) : 'All Size,S,M,L,XL';
   $st = $pdo->prepare("INSERT INTO products (name, description, price, image_path, sizes, is_best_seller) VALUES (?,?,?,?,?,?)");
   $st->execute([$data['name'], $data['description'], $data['price'], $imagePath, $sizes, !empty($data['is_best_seller'])?1:0]);
 }
@@ -53,7 +53,7 @@ function updateProduct($id, $data, $file){
   if(isset($file['image']) && $file['image']['error']===UPLOAD_ERR_OK){
     $imagePath = handleUpload($file['image']);
   }
-  $sizes = isset($data['sizes']) ? implode(',', $data['sizes']) : 'S,M,L,XL';
+  $sizes = isset($data['sizes']) ? implode(',', $data['sizes']) : 'All Size,S,M,L,XL';
   $st = $pdo->prepare("UPDATE products SET name=?, description=?, price=?, image_path=?, sizes=?, is_best_seller=? WHERE id=?");
   $st->execute([$data['name'], $data['description'], $data['price'], $imagePath, $sizes, !empty($data['is_best_seller'])?1:0, $id]);
 }

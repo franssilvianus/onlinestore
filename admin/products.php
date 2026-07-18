@@ -33,7 +33,7 @@ try{
 
 <?php
 if(($action==='new') || ($action==='edit' && isset($_GET['id']))):
-  $prod = ['name'=>'','description'=>'','price'=>'','sizes'=>'S,M,L,XL','image_path'=>'','is_best_seller'=>0];
+  $prod = ['name'=>'','description'=>'','price'=>'','sizes'=>'All Size,S,M,L,XL','image_path'=>'','is_best_seller'=>0];
   if($action==='edit'){ $prod = getProduct((int)$_GET['id']); }
 ?>
 <div class="card admin-card h-100 p-3 mb-4">
@@ -56,7 +56,7 @@ if(($action==='new') || ($action==='edit' && isset($_GET['id']))):
       </div>
       <div class="col-12">
         <label class="form-label">Ukuran Tersedia</label>
-        <?php $allSizes = ['XS','S','M','L','XL','XXL']; $sel = array_map('trim', explode(',', $prod['sizes'])); ?>
+        <?php $allSizes = ['All Size','XS','S','M','L','XL','XXL']; $sel = array_map('trim', explode(',', $prod['sizes'])); ?>
         <div class="d-flex flex-wrap gap-2">
           <?php foreach($allSizes as $s): ?>
             <label class="form-check me-2">

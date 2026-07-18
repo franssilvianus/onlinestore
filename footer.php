@@ -49,15 +49,18 @@ async function addToCart(productId, size, qty){
 function selectSize(pid, el, size){
   const hidden = document.querySelector('input[name="size_'+pid+'"]');
   if (hidden) hidden.value = size;
+
   const container = el.closest('.mb-2');
   if (container){
     container.querySelectorAll('.badge-size').forEach(b=>{
-      b.classList.remove('bg-dark','text-white');
-      b.classList.add('bg-dark','text-white','bg-light','text-dark');
+      b.classList.remove('is-selected','bg-dark','text-white','bg-light','text-dark');
+      b.setAttribute('aria-pressed', 'false');
     });
   }
-  el.classList.remove('bg-light','text-dark');
-  el.classList.add('bg-light','text-dark','bg-dark','text-white');
+
+  el.classList.remove('bg-light','text-dark','bg-dark','text-white');
+  el.classList.add('is-selected','bg-dark','text-white');
+  el.setAttribute('aria-pressed', 'true');
 }
 </script>
 

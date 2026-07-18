@@ -5,16 +5,16 @@
   <div class="p-4 p-md-5 rounded-4 hero-gradient shadow-sm">
     <div class="row g-4 align-items-center">
       <div class="col-lg-7">
-        <h1 class="display-6 fw-bold mb-3">Rebelstuff</h1>
-        <p class="lead mb-3">Brand lokal streetwear dengan desain orisinal & kualitas terbaik.</p>
+        <h1 class="display-6 fw-bold mb-3">Terra Kala Eco Recycled Store</h1>
+        <p class="lead mb-3">Tempat belanja produk ramah lingkungan yang dibuat dari material daur ulang, modern, dan tetap stylish.</p>
         <div class="d-flex gap-2 flex-wrap mb-3">
-          <span class="badge pill-badge">Orisinal Design</span>
-          <span class="badge pill-badge">Bahan Premium</span>
-          <span class="badge pill-badge">Made in Indonesia</span>
+          <span class="badge pill-badge">Produk Daur Ulang</span>
+          <span class="badge pill-badge">Bahan Ramah Lingkungan</span>
+          <span class="badge pill-badge">Zero Waste Mindset</span>
         </div>
         <div class="d-flex gap-2">
-          <a href="#shop" class="btn btn-light btn-lg"><i class="fa fa-cart-plus me-1"></i> Belanja Sekarang</a>
-          <a href="#about" class="btn btn-outline-light btn-lg">Tentang Kami</a>
+          <a href="#shop" class="btn btn-light btn-lg"><i class="fa fa-cart-plus me-1"></i> Jelajahi Produk</a>
+          <a href="#about" class="btn btn-outline-light btn-lg">Kenapa Kami</a>
         </div>
       </div>
       <div class="col-lg-5">
@@ -65,9 +65,8 @@
           </h2>
           <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accAbout">
             <div class="accordion-body">
-              Desain kami membawa pesan kebebasan berekspresi dan gaya hidup urban. Desain Rebelstuff Project menggabungkan elemen-elemen estetika yang berani dengan filosofi yang mendalam.
-              Setiap desain tidak hanya berfokus pada tampilan visual, tetapi juga membawa pesan yang kuat tentang pemberontakan, kebebasan, dan ekspresi diri. Dengan sentuhan modern, desain ini
-              memadukan tren kontemporer dan inovasi, menciptakan karya yang relevan dengan gaya hidup generasi saat ini yang ingin tampil berbeda dan autentik.
+              Desain kami menggabungkan estetika modern dengan semangat keberlanjutan. Setiap produk Terra Kala dibuat untuk memberi nilai lebih pada gaya hidup Anda, sambil mengurangi limbah dan mendukung penggunaan material daur ulang secara lebih sadar.
+              Kami percaya bahwa fashion dan lifestyle yang berkelanjutan bisa tetap kuat, menarik, dan penuh karakter.
             </div>
           </div>
         </div>
@@ -79,10 +78,8 @@
           </h2>
           <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accAbout">
             <div class="accordion-body">
-              Rebelstuff Project berkomitmen untuk selalu menghadirkan produk dengan kualitas terbaik, menggunakan bahan-bahan unggulan yang tidak hanya tahan lama tetapi juga nyaman digunakan.
-              Kami percaya bahwa kualitas adalah bagian dari setiap langkah kreatif, oleh karena itu setiap item yang kami buat dipilih dengan cermat menggunakan material yang premium dan ramah di kulit.
-              Kami memastikan setiap jahitan, detail, dan tekstur produk kami memberikan kenyamanan ekstra untuk pemakainya, agar Anda dapat tampil penuh percaya diri tanpa mengorbankan kenyamanan.
-              Dengan perpaduan antara desain berani dan kualitas bahan yang superior, Rebelstuff hadir untuk mendukung gaya hidup bebas, kreatif, dan penuh makna.
+              Terra Kala berkomitmen menghadirkan produk berkualitas tinggi dengan bahan yang lebih bertanggung jawab secara lingkungan. Kami memilih material yang tahan lama, nyaman dipakai, dan dibuat dengan pendekatan yang lebih rendah limbah.
+              Setiap jahitan, detail, dan finishing dipilih agar produk tidak hanya bagus dipakai, tetapi juga sejalan dengan nilai hidup yang lebih hijau dan sadar konsumsi.
             </div>
           </div>
         </div>
@@ -99,14 +96,10 @@
         <div class="col-lg-7">
           <h2 class="mb-2 section-title">Tentang Kami</h2>
           <div class="divider"></div>
-          <p>Rebelstuff adalah brand streetwear lokal yang berdiri sejak tahun 2019 di Kota Depok.
-          Rebelstuff Project adalah brand yang mengusung semangat pemberontakan, kreativitas tanpa batas, dan autentisitas.
-          Dengan fokus pada ekspresi diri yang bebas, brand ini mengajak individu untuk berani berpikir dan bertindak secara kreatif.
-          Selain itu, Rebelstuff Project juga bisa mencerminkan upaya untuk menciptakan perubahan sosial atau budaya melalui karya-karya kreatif,
-          menginspirasi orang untuk menjalani hidup dengan lebih berani dan tanpa takut pada penilaian orang lain.
-          Kami berkomitmen menghadirkan produk fashion berkualitas tinggi dengan desain orisinal
-          yang merepresentasikan semangat kebebasan dan gaya hidup urban anak muda Indonesia.
-          Kami menggunakan bahan-bahan berkualitas tinggi untuk memastikan produk kami tahan lama dan nyaman digunakan.</p>
+          <p>Terra Kala adalah brand lokal yang hadir untuk menghadirkan solusi fashion dan lifestyle yang lebih ramah lingkungan. Kami percaya bahwa setiap pilihan belanja bisa menjadi langkah kecil yang berdampak besar bagi bumi.
+          Dengan fokus pada produk daur ulang dan prinsip reduce, reuse, dan recycle, Terra Kala mengajak Anda untuk tampil stylish tanpa mengorbankan tanggung jawab terhadap lingkungan.
+          Kami menghadirkan desain yang orisinal, kualitas yang nyaman dipakai, dan proses produksi yang lebih sadar akan limbah.
+          Setiap produk yang kami tawarkan dirancang untuk memberi nilai lebih pada gaya hidup modern yang lebih hijau dan berkelanjutan.</p>
           <div class="row g-3 mt-1">
             <div class="col-sm-6">
               <div class="p-3 border rounded-3 h-100">
@@ -150,9 +143,9 @@
     <div class="card-body p-4">
       <div class="row g-4 align-items-center">
         <div class="col-lg-5">
-          <h3 class="fw-bold mb-2 section-title"><i class="fa-solid fa-store me-2"></i>Rebelstuff Store</h3>
+          <h3 class="fw-bold mb-2 section-title"><i class="fa-solid fa-store me-2"></i>Terra Kala Store</h3>
           <div class="divider"></div>
-          <p class="mb-1"><i class="fa-solid fa-location-dot me-2 text-primary"></i>Kp. Pitara Rangkapanjaya Kota Depok</p>
+          <p class="mb-1"><i class="fa-solid fa-location-dot me-2 text-primary"></i>Komplek Cibubur Indah V Blok S2/1</p>
           <p class="mb-1"><i class="fa-solid fa-clock me-2 text-primary"></i>Jam Operasional: <strong>Senin - Sabtu, 10:00 - 21:00 WIB</strong></p>
           <p class="mb-1"><i class="fa-solid fa-phone me-2 text-primary"></i>No. Telepon: <strong><a href="tel:087874872257" class="text-decoration-primary">087874872257</a></strong></p>
           <a class="btn btn-sm btn-outline-success mt-2" href="https://wa.me/6287874872257" target="_blank">
@@ -162,7 +155,7 @@
         <div class="col-lg-7">
           <div class="ratio ratio-16x9 rounded-4 overflow-hidden">
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3944.6628362578583!2d106.85926701535618!3d-6.232786795906335!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e6a1df6dbfabb57%3A0x6ad40263f343e4b4!2sTaja%20Kopi!5e0!3m2!1sen!2sid!4v1637316279929!5m2!1sen!2sid"
+              src="https://www.google.com/maps?q=Komplek%20Cibubur%20Indah%20V%20Blok%20S2%2F1&z=15&output=embed"
               width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
           </div>
         </div>
@@ -172,7 +165,7 @@
 </section>
 
 <!-- Carousel Model Baju dengan Caption -->
-<section class="mb-5">
+<!-- <section class="mb-5">
   <h3 class="mb-3">Model Baju</h3>
   <?php $products = getProducts(); ?>
   <?php if(!$products): ?>
@@ -217,11 +210,41 @@
       </button>
     </div>
   <?php endif; ?>
+</section> -->
+
+<!-- Mengapa Produk Daur Ulang -->
+<section class="mb-5">
+  <div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-3 p-md-4">
+      <h3 class="mb-3">Kenapa Pilih Produk Daur Ulang?</h3>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <div class="p-3 border rounded-3 h-100">
+            <div class="fw-semibold mb-1"><i class="fa-solid fa-recycle me-2 text-success"></i>Material Daur Ulang</div>
+            <div class="small text-muted">Setiap produk dibuat dengan pendekatan yang lebih sadar sampah dan pemanfaatan kembali material.</div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="p-3 border rounded-3 h-100">
+            <div class="fw-semibold mb-1"><i class="fa-solid fa-seedling me-2 text-success"></i>Lebih Ramah Bumi</div>
+            <div class="small text-muted">Kami mendukung gaya hidup yang mengurangi jejak karbon dan mendorong konsumsi yang lebih bijak.</div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="p-3 border rounded-3 h-100">
+            <div class="fw-semibold mb-1"><i class="fa-solid fa-shirt me-2 text-success"></i>Stylish & Tahan Lama</div>
+            <div class="small text-muted">Desain modern yang tetap nyaman dipakai, kuat, dan cocok untuk aktivitas sehari-hari.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
 <!-- Pilih Model & Ukuran -->
 <section class="mt-4" id="shop">
-  <h3 class="mb-3">Pilih Model & Ukuran</h3>
+  <h3 class="mb-3">Pilih Produk Daur Ulang</h3>
+  <p class="text-muted mb-3">Temukan item favorit Anda yang dibuat dengan nilai estetika, kualitas, dan tanggung jawab lingkungan.</p>
   <div class="row g-3">
   <?php $products = $products ?? getProducts(); if(!$products): ?>
     <div class="col-12">
@@ -245,14 +268,14 @@
           <div class="mb-2">
             <label class="form-label small mb-1">Ukuran</label>
             <div>
-            <?php $sizes = explode(',', $p['sizes'] ?: 'S,M,L,XL'); foreach($sizes as $s): $s=trim($s); ?>
+            <?php $sizeList = array_map('trim', explode(',', $p['sizes'] ?: 'All Size,S,M,L,XL')); $sizeList = array_values(array_filter($sizeList, function($value){ return $value !== ''; })); if(!in_array('All Size', $sizeList, true)) { array_unshift($sizeList, 'All Size'); } $defaultSize = in_array('All Size', $sizeList, true) ? 'All Size' : ($sizeList[0] ?? 'M'); foreach($sizeList as $s): ?>
               <span class="badge bg-light text-dark border me-1 badge-size"
                 onclick="selectSize(<?php echo $p['id']; ?>, this, '<?php echo $s; ?>')">
                 <?php echo $s; ?>
               </span>
             <?php endforeach; ?>
             </div>
-            <input type="hidden" name="size_<?php echo $p['id']; ?>" value="<?php echo esc(trim(explode(',', $p['sizes'])[0] ?? 'M')); ?>">
+            <input type="hidden" name="size_<?php echo $p['id']; ?>" value="<?php echo esc($defaultSize); ?>">
           </div>
           <div class="d-flex align-items-center">
             <input type="number" min="1" value="1" class="form-control me-2" style="max-width:100px" id="qty_<?php echo $p['id']; ?>">
