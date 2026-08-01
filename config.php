@@ -1,6 +1,6 @@
 <?php
 define('DB_HOST','localhost');
-define('WHATSAPP_PHONE','6287874872257');
+define('WHATSAPP_PHONE','6281414002303');
 
 define('DB_NAME','simple_store');
 define('DB_USER','root');

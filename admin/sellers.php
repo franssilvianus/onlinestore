@@ -94,7 +94,7 @@ include '../header.php';
         <td><?php echo esc($r['name']); ?></td>
         <td><?php echo esc($r['owner_name']); ?></td>
         <td><?php echo esc($r['phone'] ?: $r['email']); ?></td>
-        <td><?php echo !empty($r['is_active']) ? 'Aktif' : 'Nonaktif'; ?></td>
+        <td><?php echo !empty($r['is_active']) ? 'Aktif' : 'User Nonaktif'; ?></td>
         <td>
           <a class="btn btn-sm btn-outline-primary" href="sellers.php?action=edit&id=<?php echo (int)$r['id']; ?>"><i class="fa fa-pen"></i> Edit</a>
           <a class="btn btn-sm btn-outline-danger" href="sellers.php?action=delete&id=<?php echo (int)$r['id']; ?>" onclick="return confirm('Hapus seller ini?')"><i class="fa fa-trash"></i> Hapus</a>

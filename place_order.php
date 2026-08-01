@@ -69,7 +69,7 @@ require_once __DIR__.'/config.php';
 $phoneAdmin = defined('WHATSAPP_PHONE') ? WHATSAPP_PHONE : '+6287874872257';
 
 $lines = [];
-$lines[] = '*Pesanan Baru dari Rebelstuff*';
+$lines[] = '*Pesanan Baru dari Terra Kala*';
 $lines[] = 'Invoice: #' . $orderNo;
 $lines[] = 'Nama: ' . $_POST['full_name'];
 $lines[] = 'No. WhatsApp: ' . $_POST['phone'];

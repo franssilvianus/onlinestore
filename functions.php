@@ -112,8 +112,18 @@ function ensureSellersSchema(){
 
 function ensureDemoSeller(){
   $pdo = getPDO();
-  $count = (int)$pdo->query("SELECT COUNT(*) FROM sellers")->fetchColumn();
-  if($count > 0){ return; }
+  $existing = $pdo->prepare("SELECT id, password_hash FROM sellers WHERE username = ? LIMIT 1");
+  $existing->execute(['sellerdemo']);
+  $row = $existing->fetch();
+
+  if($row){
+    if(empty($row['password_hash'])){
+      $pdo->prepare("UPDATE sellers SET password_hash = ? WHERE id = ?")
+        ->execute([password_hash('seller123', PASSWORD_DEFAULT), (int)$row['id']]);
+    }
+    return;
+  }
+
   $username = 'sellerdemo';
   $password = 'seller123';
   $pdo->prepare("INSERT INTO sellers (name, owner_name, phone, email, address, username, password_hash, is_active) VALUES (?,?,?,?,?,?,?,?)")
