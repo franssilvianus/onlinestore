@@ -251,9 +251,9 @@
       <p class="text-muted mb-0">Temukan item favorit Anda yang dibuat dengan nilai estetika, kualitas, dan tanggung jawab lingkungan.</p>
     </div>
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 w-100">
-      <form method="get" class="d-flex flex-wrap align-items-center gap-2" style="flex:1; min-width:280px;">
+      <form id="product-search-form" method="get" action="index.php" class="d-flex flex-wrap align-items-center gap-2" style="flex:1; min-width:280px;">
         <input type="hidden" name="seller_id" value="<?php echo (int)$sellerFilter; ?>">
-        <input type="text" name="q" class="form-control form-control-sm" style="min-width:220px; max-width:280px;" placeholder="Cari produk..." value="<?php echo esc($searchQuery); ?>">
+        <input type="text" id="product-search-input" name="q" class="form-control form-control-sm" style="min-width:220px; max-width:280px;" placeholder="Cari produk..." value="<?php echo esc($searchQuery); ?>">
         <button type="submit" class="btn btn-sm btn-success">Cari</button>
         <?php if($searchQuery !== ''): ?>
           <a href="index.php<?php echo $sellerFilter > 0 ? '?seller_id=' . (int)$sellerFilter . '#shop' : '#shop'; ?>" class="btn btn-sm btn-outline-secondary">Reset</a>
@@ -271,7 +271,7 @@
   </div>
   <div class="row g-3">
   <?php if(!$products): ?>
-    <div class="col-12">
+    <div class="col-12" id="product-empty-state">
       <div class="alert alert-info d-flex align-items-center gap-2" style="border-radius:14px;">
         <i class="fa-solid fa-magnifying-glass"></i>
         <span>
@@ -284,7 +284,7 @@
       </div>
     </div>
   <?php else: foreach($products as $p): ?>
-    <div class="col-12 col-sm-6 col-lg-4">
+    <div class="col-12 col-sm-6 col-lg-4 product-card" data-search="<?php echo esc(strtolower((string)($p['name'] ?? '') . ' ' . (string)($p['description'] ?? '') . ' ' . (string)($p['seller_name'] ?? ''))); ?>">
       <div class="card h-100">
         <?php if($p['image_path']): ?>
           <img src="<?php echo esc($p['image_path']); ?>" class="card-img-top" alt="<?php echo esc($p['name']); ?>" style="height:220px; object-fit:cover;">
@@ -329,5 +329,58 @@
   <?php endforeach; endif; ?>
   </div>
 </section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const form = document.getElementById('product-search-form');
+  const input = document.getElementById('product-search-input');
+  const cards = Array.from(document.querySelectorAll('.product-card'));
+  const emptyState = document.getElementById('product-empty-state');
+
+  if (!form || !input) return;
+
+  function applyFilter(term) {
+    const keyword = (term || '').toLowerCase().trim();
+    let visibleCount = 0;
+
+    cards.forEach(function (card) {
+      const haystack = (card.getAttribute('data-search') || '').toLowerCase();
+      const match = !keyword || haystack.includes(keyword);
+      card.style.display = match ? '' : 'none';
+      if (match) visibleCount++;
+    });
+
+    if (emptyState) {
+      emptyState.style.display = visibleCount > 0 ? 'none' : '';
+    }
+  }
+
+  input.addEventListener('input', function () {
+    applyFilter(this.value);
+  });
+
+  form.addEventListener('submit', function (event) {
+    event.preventDefault();
+    const term = (input.value || '').trim();
+    const params = new URLSearchParams(window.location.search);
+    if (term) {
+      params.set('q', term);
+    } else {
+      params.delete('q');
+    }
+
+    const sellerValue = document.querySelector('input[name="seller_id"]')?.value || '';
+    if (sellerValue) {
+      params.set('seller_id', sellerValue);
+    } else {
+      params.delete('seller_id');
+    }
+
+    window.location.href = window.location.pathname + '?' + params.toString() + '#shop';
+  });
+
+  applyFilter(input.value || '');
+});
+</script>
 
 <?php include 'footer.php'; ?>
