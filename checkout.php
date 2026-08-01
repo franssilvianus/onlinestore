@@ -9,7 +9,10 @@ if(!$cart){
   include 'footer.php'; exit;
 }
 $subtotal = 0;
-foreach($cart as $item){ $subtotal += $item['price'] * $item['qty']; }
+foreach($cart as $item){
+  if(!empty($item['is_reward'])){ continue; }
+  $subtotal += $item['price'] * $item['qty'];
+}
 $customerName = $_SESSION['customer_name'] ?? '';
 $customerPhone = $_SESSION['customer_phone'] ?? '';
 $customerAddress = $_SESSION['customer_address'] ?? '';
@@ -33,11 +36,17 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'redeem
       $updated = redeemCustomerVoucher($customer['id'], $_POST['redeem_reward']);
       $_SESSION['customer_voucher_count'] = $updated['voucher_count'];
       $customerVouchers = $updated['voucher_count'];
-      $redeemMessage = 'Berhasil menukar reward: ' . esc($updated['reward_name']);
+      $_SESSION['reward_claim_message'] = 'Berhasil menukar reward: ' . ($updated['reward_name'] ?? 'Reward');
+      header('Location: checkout.php?reward_claimed=1');
+      exit;
     } catch(Throwable $e){
       $error = $e->getMessage();
     }
   }
+}
+if(!empty($_SESSION['reward_claim_message'])){
+  $redeemMessage = $_SESSION['reward_claim_message'];
+  unset($_SESSION['reward_claim_message']);
 }
 ?>
 <div class="row g-3 align-items-start">
@@ -56,19 +65,22 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'redeem
           </colgroup>
           <thead><tr><th>Produk</th><th>Seller</th><th>Ukuran</th><th class="text-end">Harga</th><th class="text-center">Qty</th><th class="text-end">Subtotal</th></tr></thead>
           <tbody>
-          <?php foreach($cart as $item): $st = $item['price'] * $item['qty']; ?>
+          <?php foreach($cart as $item): $isReward = !empty($item['is_reward']); $st = $isReward ? 0 : ($item['price'] * $item['qty']); ?>
             <tr>
               <td>
                 <div class="d-flex align-items-center gap-2">
                   <?php if($item['image']): ?><img src="<?php echo esc($item['image']); ?>" width="44" class="rounded" style="object-fit:cover; height:44px; flex-shrink:0;"><?php endif; ?>
-                  <div class="small fw-semibold" style="word-break: break-word;"><?php echo esc($item['name']); ?></div>
+                  <div class="small fw-semibold" style="word-break: break-word;">
+                    <?php echo esc($item['name']); ?>
+                    <?php if($isReward): ?><span class="badge bg-success ms-2">Reward klaim</span><?php endif; ?>
+                  </div>
                 </div>
               </td>
               <td class="small"><?php echo !empty($item['seller_name']) ? esc($item['seller_name']) : '-'; ?></td>
               <td class="small"><?php echo esc($item['size']); ?></td>
               <td class="text-end small"><?php echo formatRupiah($item['price']); ?></td>
               <td class="text-center small"><?php echo (int)$item['qty']; ?></td>
-              <td class="text-end small"><?php echo formatRupiah($st); ?></td>
+              <td class="text-end small"><?php echo $isReward ? 'Gratis' : formatRupiah($st); ?></td>
             </tr>
           <?php endforeach; ?>
           </tbody>

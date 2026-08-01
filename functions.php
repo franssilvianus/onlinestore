@@ -281,6 +281,35 @@ function deleteVoucherReward($id){
   $st->execute([(int)$id]);
 }
 
+function addRewardItemToCart($reward){
+  if(session_status() === PHP_SESSION_NONE){ session_start(); }
+  if(!isset($_SESSION['cart'])){ $_SESSION['cart'] = []; }
+
+  $rewardKey = trim((string)($reward['reward_key'] ?? ''));
+  if($rewardKey === ''){ return; }
+
+  foreach($_SESSION['cart'] as $key => $item){
+    if(($item['type'] ?? '') === 'reward' && (($item['reward_key'] ?? '') === $rewardKey)){
+      $_SESSION['cart'][$key]['qty'] = (int)($_SESSION['cart'][$key]['qty'] ?? 1) + 1;
+      return;
+    }
+  }
+
+  $_SESSION['cart'][] = [
+    'id' => 0,
+    'type' => 'reward',
+    'reward_key' => $rewardKey,
+    'name' => $reward['name'] ?? 'Reward',
+    'description' => $reward['description'] ?? 'Reward yang diklaim',
+    'price' => 0,
+    'qty' => 1,
+    'image' => null,
+    'size' => 'Reward',
+    'seller_name' => null,
+    'is_reward' => true,
+  ];
+}
+
 function getCustomerVoucherRedemptions($customerId, $limit = 20){
   ensureVoucherRedemptionsSchema();
   $pdo = getPDO();
@@ -314,6 +343,7 @@ function redeemCustomerVoucher($customerId, $rewardKey){
   $st->execute([(int)$reward['id']]);
   $st = $pdo->prepare("INSERT INTO voucher_redemptions (customer_id, reward_key, reward_name, voucher_cost) VALUES (?,?,?,?)");
   $st->execute([$customerId, $reward['reward_key'], $reward['name'], (int)$reward['voucher_cost']]);
+  addRewardItemToCart($reward);
   $customer = getCustomerById($customerId);
   $customer['reward_name'] = $reward['name'];
   return $customer;

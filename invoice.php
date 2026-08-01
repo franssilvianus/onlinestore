@@ -104,14 +104,17 @@ body{background:linear-gradient(180deg,#f9fcf3 0%,var(--bg) 100%); color:var(--t
       <table class="table">
         <thead><tr><th>Produk</th><th>Seller</th><th class="text-center">Ukuran</th><th class="text-end">Harga</th><th class="text-center">Qty</th><th class="text-end">Subtotal</th></tr></thead>
         <tbody>
-        <?php foreach($order['items'] as $it): $st = $it['price'] * $it['qty']; ?>
+        <?php foreach($order['items'] as $it): $isReward = !empty($it['is_reward']); $st = $isReward ? 0 : ($it['price'] * $it['qty']); ?>
           <tr>
-            <td><?php echo esc($it['name']); ?></td>
+            <td>
+              <?php echo esc($it['name']); ?>
+              <?php if($isReward): ?><span class="badge bg-success ms-2">Reward klaim</span><?php endif; ?>
+            </td>
             <td><?php echo !empty($it['seller_name']) ? esc($it['seller_name']) : '-'; ?></td>
             <td class="text-center"><?php echo esc($it['size']); ?></td>
             <td class="text-end"><?php echo formatRupiah($it['price']); ?></td>
             <td class="text-center"><?php echo (int)$it['qty']; ?></td>
-            <td class="text-end"><?php echo formatRupiah($st); ?></td>
+            <td class="text-end"><?php echo $isReward ? 'Gratis' : formatRupiah($st); ?></td>
           </tr>
         <?php endforeach; ?>
         </tbody>

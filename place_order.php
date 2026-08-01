@@ -20,7 +20,10 @@ if($missing){
 }
 
 $subtotal = 0;
-foreach($cart as $item){ $subtotal += $item['price'] * $item['qty']; }
+foreach($cart as $item){
+  if(!empty($item['is_reward'])){ continue; }
+  $subtotal += $item['price'] * $item['qty'];
+}
 
 $courier = $_POST['courier'] ?? 'JNE';
 $service = $_POST['service'] ?? 'REG';
@@ -106,6 +109,7 @@ $lines[] = 'Alamat: ' . trim($_POST['address'].' '.$_POST['city'].' '.$_POST['pr
 $lines[] = '';
 $lines[] = '*Rincian Pesanan:*';
 foreach($cart as $it){
+  if(!empty($it['is_reward'])){ continue; }
   $sellerText = !empty($it['seller_name']) ? ' [Seller: ' . $it['seller_name'] . ']' : '';
   $lines[] = '- ' . ((int)$it['qty']) . 'x ' . $it['name'] . ' (Ukuran: ' . $it['size'] . ')' . $sellerText;
 }
@@ -155,14 +159,17 @@ $waLink = 'https://api.whatsapp.com/send/?phone='.$phoneAdmin.'&text='.rawurlenc
     <table class="table">
       <thead><tr><th>Produk</th><th>Seller</th><th>Ukuran</th><th class="text-end">Harga</th><th class="text-center">Qty</th><th class="text-end">Subtotal</th></tr></thead>
       <tbody>
-      <?php foreach($cart as $item): $st = $item['price'] * $item['qty']; ?>
+      <?php foreach($cart as $item): $isReward = !empty($item['is_reward']); $st = $isReward ? 0 : ($item['price'] * $item['qty']); ?>
         <tr>
-          <td><?php echo esc($item['name']); ?></td>
+          <td>
+            <?php echo esc($item['name']); ?>
+            <?php if($isReward): ?><span class="badge bg-success ms-2">Reward klaim</span><?php endif; ?>
+          </td>
           <td><?php echo !empty($item['seller_name']) ? esc($item['seller_name']) : '-'; ?></td>
           <td><?php echo esc($item['size']); ?></td>
           <td class="text-end"><?php echo formatRupiah($item['price']); ?></td>
           <td class="text-center"><?php echo (int)$item['qty']; ?></td>
-          <td class="text-end"><?php echo formatRupiah($st); ?></td>
+          <td class="text-end"><?php echo $isReward ? 'Gratis' : formatRupiah($st); ?></td>
         </tr>
       <?php endforeach; ?>
       </tbody>

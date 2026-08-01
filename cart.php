@@ -14,7 +14,8 @@ $total = 0; ?>
     </thead>
     <tbody>
     <?php foreach($cart as $k=>$item):
-      $subtotal = $item['price'] * $item['qty'];
+      $isReward = !empty($item['is_reward']);
+      $subtotal = $isReward ? 0 : $item['price'] * $item['qty'];
       $total += $subtotal; ?>
       <tr>
         <td>
@@ -22,6 +23,9 @@ $total = 0; ?>
             <?php if($item['image']): ?><img src="<?php echo esc($item['image']); ?>" width="60" class="rounded me-2"><?php endif; ?>
             <div>
               <div><?php echo esc($item['name']); ?></div>
+              <?php if($isReward): ?>
+                <div class="small text-success fw-semibold">Reward klaim · Gratis</div>
+              <?php endif; ?>
             </div>
           </div>
         </td>
@@ -29,9 +33,9 @@ $total = 0; ?>
         <td><?php echo esc($item['size']); ?></td>
         <td><?php echo formatRupiah($item['price']); ?></td>
         <td style="max-width:120px;">
-          <input type="number" class="form-control" min="1" name="qty[<?php echo esc($k); ?>]" value="<?php echo (int)$item['qty']; ?>">
+          <input type="number" class="form-control" min="1" name="qty[<?php echo esc($k); ?>]" value="<?php echo (int)$item['qty']; ?>" <?php echo $isReward ? 'readonly disabled' : ''; ?>>
         </td>
-        <td><?php echo formatRupiah($subtotal); ?></td>
+        <td><?php echo $isReward ? 'Gratis' : formatRupiah($subtotal); ?></td>
         <td><a href="update_cart.php?remove=<?php echo urlencode($k); ?>" class="btn btn-sm btn-outline-danger">Hapus</a></td>
       </tr>
     <?php endforeach; ?>
