@@ -18,6 +18,27 @@ $customerProvince = $_SESSION['customer_province'] ?? '';
 $customerPostal = $_SESSION['customer_postal_code'] ?? '';
 $customerPoints = $_SESSION['customer_points_balance'] ?? 0;
 $customerVouchers = $_SESSION['customer_voucher_count'] ?? 0;
+$rewardOptions = getVoucherRewards();
+$redeemMessage = null;
+$error = null;
+if($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'redeem'){
+  if(!csrf_verify($_POST['csrf'] ?? '')){
+    $error = 'Token CSRF tidak valid.';
+  } elseif(empty($_POST['redeem_reward'])){
+    $error = 'Pilih hadiah reward.';
+  } else {
+    try {
+      $customer = getCustomerById($_SESSION['customer_id']);
+      if(!$customer){ throw new RuntimeException('Pelanggan tidak ditemukan.'); }
+      $updated = redeemCustomerVoucher($customer['id'], $_POST['redeem_reward']);
+      $_SESSION['customer_voucher_count'] = $updated['voucher_count'];
+      $customerVouchers = $updated['voucher_count'];
+      $redeemMessage = 'Berhasil menukar reward: ' . esc($updated['reward_name']);
+    } catch(Throwable $e){
+      $error = $e->getMessage();
+    }
+  }
+}
 ?>
 <div class="row g-3 align-items-start">
   <div class="col-lg-7">
@@ -128,11 +149,39 @@ $customerVouchers = $_SESSION['customer_voucher_count'] ?? 0;
         </div>
       </form>
       <div class="small text-muted mt-2">* Ongkir dihitung sederhana (flat-rate).</div>
+      <?php if(!empty($redeemMessage)): ?><div class="alert alert-success small mt-2 mb-0"><?php echo esc($redeemMessage); ?></div><?php endif; ?>
+      <?php if(!empty($error)): ?><div class="alert alert-danger small mt-2 mb-0"><?php echo esc($error); ?></div><?php endif; ?>
       <div class="alert alert-success small mt-2 mb-0">
         Halo <?php echo esc($customerName ?: 'Pelanggan'); ?>, poin kamu saat ini <strong><?php echo (int)$customerPoints; ?></strong> dan voucher terkumpul <strong><?php echo (int)$customerVouchers; ?></strong>.
       </div>
       <div class="alert alert-info small mt-2 mb-0">
-        Belanja minimal Rp 10.000 mendapatkan 1 poin. 5 poin bisa ditukar menjadi voucher eco-friendly di halaman akun.
+        Belanja minimal Rp 10.000 mendapatkan 1 poin. 5 poin bisa ditukar menjadi voucher eco-friendly.
+      </div>
+      <div class="card p-3 mt-3">
+        <h5 class="mb-3">Klaim Reward</h5>
+        <?php if((int)$customerVouchers > 0 && $rewardOptions): ?>
+          <form method="post" class="row g-2 align-items-end">
+            <input type="hidden" name="action" value="redeem">
+            <input type="hidden" name="csrf" value="<?php echo esc(csrf_token()); ?>">
+            <div class="col-md-8">
+              <label class="form-label">Pilih Reward</label>
+              <select name="redeem_reward" class="form-select" required>
+                <option value="">-- Pilih reward --</option>
+                <?php foreach($rewardOptions as $key => $reward): ?>
+                  <option value="<?php echo esc($key); ?>" <?php echo (int)$reward['stock'] <= 0 ? 'disabled' : ''; ?>>
+                    <?php echo esc($reward['name']); ?> (<?php echo (int)$reward['cost']; ?> voucher, sisa stock <?php echo (int)$reward['stock']; ?>)
+                  </option>
+                <?php endforeach; ?>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <button class="btn btn-success w-100">Klaim Sekarang</button>
+            </div>
+          </form>
+          <div class="small mt-2">Voucher tersisa: <strong><?php echo (int)$customerVouchers; ?></strong></div>
+        <?php else: ?>
+          <div class="small">Kamu belum punya voucher untuk ditukar atau tidak ada stock reward tersedia.</div>
+        <?php endif; ?>
       </div>
     </div>
   </div>

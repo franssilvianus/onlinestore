@@ -47,7 +47,7 @@ include '../header.php';
 <?php if(isset($_GET['msg'])): ?><div class="alert alert-success">Sukses <?php echo esc($_GET['msg']); ?>.</div><?php endif; ?>
 
 <?php if($action === 'new' || ($action === 'edit' && $id)):
-  $reward = ['reward_key'=>'','name'=>'','description'=>'','voucher_cost'=>1,'is_active'=>1];
+  $reward = ['reward_key'=>'','name'=>'','description'=>'','voucher_cost'=>1,'voucher_stock'=>0,'is_active'=>1];
   if($action === 'edit'){
     $row = getVoucherRewardById($id);
     if($row) $reward = $row;
@@ -74,6 +74,10 @@ include '../header.php';
         <input type="number" name="voucher_cost" class="form-control" min="1" required value="<?php echo esc($reward['voucher_cost']); ?>">
       </div>
       <div class="col-md-4">
+        <label class="form-label">Stock Reward</label>
+        <input type="number" name="voucher_stock" class="form-control" min="0" required value="<?php echo esc($reward['voucher_stock']); ?>">
+      </div>
+      <div class="col-md-4">
         <label class="form-label">Aktif?</label>
         <select name="is_active" class="form-select">
           <option value="1" <?php echo $reward['is_active'] ? 'selected' : ''; ?>>Ya</option>
@@ -98,6 +102,7 @@ include '../header.php';
         <th>Kode</th>
         <th>Nama</th>
         <th>Biaya</th>
+        <th>Stock</th>
         <th>Status</th>
         <th>Aksi</th>
       </tr>
@@ -112,6 +117,7 @@ include '../header.php';
           <td><?php echo esc($row['reward_key']); ?></td>
           <td><?php echo esc($row['name']); ?></td>
           <td><?php echo (int)$row['voucher_cost']; ?></td>
+          <td><?php echo (int)$row['voucher_stock']; ?></td>
           <td><?php echo $row['is_active'] ? 'Aktif' : 'Nonaktif'; ?></td>
           <td>
             <a class="btn btn-sm btn-outline-primary" href="voucher_rewards.php?action=edit&id=<?php echo (int)$row['id']; ?>">Edit</a>
