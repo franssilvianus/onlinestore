@@ -1,13 +1,13 @@
 <?php
-include 'header.php';
+if (session_status() === PHP_SESSION_NONE) session_start();
+require_once __DIR__.'/functions.php';
+
 if(empty($_SESSION['customer_id'])){
-  header('Location: customer_login.php?next=checkout.php'); exit;
+  header('Location: customer_login.php?next=checkout.php');
+  exit;
 }
+
 $cart = $_SESSION['cart'] ?? [];
-if(!$cart){
-  echo '<div class="alert alert-info">Keranjang kosong. <a href="index.php">Belanja dulu</a>.</div>';
-  include 'footer.php'; exit;
-}
 $subtotal = 0;
 foreach($cart as $item){
   if(!empty($item['is_reward'])){ continue; }
@@ -48,6 +48,15 @@ if(!empty($_SESSION['reward_claim_message'])){
   $redeemMessage = $_SESSION['reward_claim_message'];
   unset($_SESSION['reward_claim_message']);
 }
+
+if(!$cart){
+  include 'header.php';
+  echo '<div class="alert alert-info">Keranjang kosong. <a href="index.php">Belanja dulu</a>.</div>';
+  include 'footer.php';
+  exit;
+}
+
+include 'header.php';
 ?>
 <div class="row g-3 align-items-start">
   <div class="col-lg-7">
