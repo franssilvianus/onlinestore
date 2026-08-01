@@ -165,12 +165,23 @@ function updateCustomerById($id, $data){
   return getCustomerById($id);
 }
 
-function upsertCustomerPoints($data, $pointsEarned){
+function upsertCustomerPoints($data, $pointsEarned, $customerId = null){
   ensureCustomersSchema();
   $pdo = getPDO();
   $phone = trim($data['phone'] ?? '');
   if($phone === ''){ throw new RuntimeException('Nomor telepon customer wajib diisi untuk sistem poin.'); }
-  $customer = getCustomerByPhone($phone);
+  if($customerId === null && !empty($_SESSION['customer_id'])){
+    $customerId = (int)$_SESSION['customer_id'];
+  }
+  $customer = null;
+  if($customerId){
+    $customer = getCustomerById($customerId);
+    if(!$customer){
+      $customer = getCustomerByPhone($phone);
+    }
+  } else {
+    $customer = getCustomerByPhone($phone);
+  }
   $currentPoints = (int)($customer['points_balance'] ?? 0);
   $currentVouchers = (int)($customer['voucher_count'] ?? 0);
   $pointsEarned = max(0, (int)$pointsEarned);
@@ -181,9 +192,10 @@ function upsertCustomerPoints($data, $pointsEarned){
   $now = date('Y-m-d H:i:s');
 
   if($customer){
-    $st = $pdo->prepare("UPDATE customers SET name=?, address=?, city=?, province=?, postal_code=?, points_balance=?, voucher_count=?, last_order_at=? WHERE id=?");
+    $st = $pdo->prepare("UPDATE customers SET name=?, phone=?, address=?, city=?, province=?, postal_code=?, points_balance=?, voucher_count=?, last_order_at=? WHERE id=?");
     $st->execute([
       trim($data['name'] ?? ''),
+      $phone,
       trim($data['address'] ?? ''),
       trim($data['city'] ?? ''),
       trim($data['province'] ?? ''),
@@ -193,15 +205,9 @@ function upsertCustomerPoints($data, $pointsEarned){
       $now,
       $customer['id'],
     ]);
-    $customer['name'] = trim($data['name'] ?? '');
-    $customer['address'] = trim($data['address'] ?? '');
-    $customer['city'] = trim($data['city'] ?? '');
-    $customer['province'] = trim($data['province'] ?? '');
-    $customer['postal_code'] = trim($data['postal_code'] ?? '');
-    $customer['points_balance'] = $updatedPoints;
-    $customer['voucher_count'] = $updatedVouchers;
-    $customer['voucher_awarded'] = $earnedVouchers;
+    $customer = getCustomerById($customer['id']);
     $customer['points_earned'] = $pointsEarned;
+    $customer['voucher_awarded'] = $earnedVouchers;
     return $customer;
   }
 
@@ -217,19 +223,10 @@ function upsertCustomerPoints($data, $pointsEarned){
     $updatedVouchers,
     $now,
   ]);
-  return [
-    'id' => (int)$pdo->lastInsertId(),
-    'name' => trim($data['name'] ?? ''),
-    'phone' => $phone,
-    'address' => trim($data['address'] ?? ''),
-    'city' => trim($data['city'] ?? ''),
-    'province' => trim($data['province'] ?? ''),
-    'postal_code' => trim($data['postal_code'] ?? ''),
-    'points_balance' => $updatedPoints,
-    'voucher_count' => $updatedVouchers,
-    'voucher_awarded' => $earnedVouchers,
-    'points_earned' => $pointsEarned,
-  ];
+  $customer = getCustomerById((int)$pdo->lastInsertId());
+  $customer['points_earned'] = $pointsEarned;
+  $customer['voucher_awarded'] = $earnedVouchers;
+  return $customer;
 }
 
 function ensureDemoSeller(){
