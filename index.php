@@ -250,14 +250,14 @@
       <h3 class="mb-1">Pilih Produk Daur Ulang</h3>
       <p class="text-muted mb-0">Temukan item favorit Anda yang dibuat dengan nilai estetika, kualitas, dan tanggung jawab lingkungan.</p>
     </div>
-    <!-- <div class="d-flex flex-wrap gap-2">
+    <div class="d-flex flex-wrap gap-2">
       <a class="btn btn-sm <?php echo $sellerFilter > 0 ? 'btn-outline-success' : 'btn-success'; ?>" href="index.php#shop">Semua Seller</a>
       <?php foreach($sellers as $seller): ?>
-        <a class="btn btn-sm <?php echo $sellerFilter === (int)$seller['id'] ? 'btn-success' : 'btn-outline-success'; ?>" href="index.php?seller_id=<?php echo (int)$seller['id']; ?>#shop">
+        <!-- <a class="btn btn-sm <?php echo $sellerFilter === (int)$seller['id'] ? 'btn-success' : 'btn-outline-success'; ?>" href="index.php?seller_id=<?php echo (int)$seller['id']; ?>#shop">
           <?php echo esc($seller['name']); ?>
-        </a>
+        </a> -->
       <?php endforeach; ?>
-    </div> -->
+    </div>
   </div>
   <div class="row g-3">
   <?php if(!$products): ?>
