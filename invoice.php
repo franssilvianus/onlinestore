@@ -89,6 +89,11 @@ body{background:linear-gradient(180deg,#f9fcf3 0%,var(--bg) 100%); color:var(--t
         <div class="text-muted small">Kurir: <?php echo esc($order['courier']); ?> (<?php echo esc($order['service']); ?>)</div>
         <div class="text-muted small">Ongkir: <?php echo formatRupiah($order['shipping']); ?></div>
         <div class="text-muted small">Subtotal: <?php echo formatRupiah($order['subtotal']); ?></div>
+        <?php if(!empty($order['points_earned']) || !empty($order['voucher_awarded'])): ?>
+        <div class="text-muted small">Poin Diperoleh: <?php echo (int)($order['points_earned'] ?? 0); ?> poin</div>
+        <div class="text-muted small">Poin Saat Ini: <?php echo (int)($order['points_balance'] ?? 0); ?> poin</div>
+        <div class="text-muted small">Voucher Terkumpul: <?php echo (int)($order['voucher_count'] ?? 0); ?> voucher</div>
+        <?php endif; ?>
         <div class="fw-bold">Total: <?php echo formatRupiah($order['total']); ?></div>
       </div>
     </div>

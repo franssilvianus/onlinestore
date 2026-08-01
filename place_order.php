@@ -26,6 +26,16 @@ $shipping = calcShipping($courier, $service, $province);
 $total = $subtotal + $shipping;
 
 $orderNo = 'INV'.date('YmdHis').rand(100,999);
+$pointsEarned = calculatePointsFromSubtotal($subtotal);
+$customerData = [
+  'name' => $_POST['full_name'],
+  'phone' => $_POST['phone'],
+  'address' => $_POST['address'],
+  'city' => $_POST['city'],
+  'province' => $_POST['province'],
+  'postal_code' => $_POST['postal_code'],
+];
+$customerInfo = upsertCustomerPoints($customerData, $pointsEarned);
 
 $lastOrder = [
   'order_no' => $orderNo,
@@ -35,6 +45,10 @@ $lastOrder = [
   'service' => $service,
   'shipping' => $shipping,
   'total' => $total,
+  'points_earned' => $pointsEarned,
+  'voucher_awarded' => $customerInfo['voucher_awarded'] ?? 0,
+  'points_balance' => $customerInfo['points_balance'] ?? 0,
+  'voucher_count' => $customerInfo['voucher_count'] ?? 0,
   'customer' => [
     'full_name' => $_POST['full_name'],
     'phone' => $_POST['phone'],
@@ -50,6 +64,7 @@ $_SESSION['last_order'] = $lastOrder;
 
 createOrder([
   'order_no' => $orderNo,
+  'customer_id' => $customerInfo['id'] ?? null,
   'customer_name' => $_POST['full_name'],
   'customer_phone' => $_POST['phone'],
   'customer_address' => $_POST['address'],
@@ -62,6 +77,8 @@ createOrder([
   'subtotal' => $subtotal,
   'shipping_cost' => $shipping,
   'total' => $total,
+  'points_earned' => $pointsEarned,
+  'voucher_awarded' => $customerInfo['voucher_awarded'] ?? 0,
 ], array_values($cart));
 
 // ===== WhatsApp message =====
@@ -110,6 +127,12 @@ $waLink = 'https://api.whatsapp.com/send/?phone='.$phoneAdmin.'&text='.rawurlenc
       <div class="d-flex justify-content-between"><span>Ongkir</span><strong><?php echo formatRupiah($shipping); ?></strong></div>
       <hr>
       <div class="d-flex justify-content-between"><span>Total</span><strong><?php echo formatRupiah($total); ?></strong></div>
+      <div class="mt-3 alert alert-success py-2">
+        <div><strong>Poin Diperoleh:</strong> <?php echo (int)$pointsEarned; ?> poin dari subtotal belanja.</div>
+        <div><strong>Poin Saat Ini:</strong> <?php echo (int)($customerInfo['points_balance'] ?? 0); ?> poin.</div>
+        <div><strong>Voucher Terkumpul:</strong> <?php echo (int)($customerInfo['voucher_count'] ?? 0); ?> voucher.</div>
+        <small>Setiap 10.000 belanja = 1 poin. 100 poin ditukar menjadi hadiah eco-friendly.</small>
+      </div>
     </div>
   </div>
 

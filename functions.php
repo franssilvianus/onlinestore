@@ -8,6 +8,7 @@ function ensureOrderSchema(){
   $pdo->exec("CREATE TABLE IF NOT EXISTS orders (
     id INT AUTO_INCREMENT PRIMARY KEY,
     order_no VARCHAR(50) NOT NULL UNIQUE,
+    customer_id INT NULL,
     customer_name VARCHAR(120) NOT NULL,
     customer_phone VARCHAR(50) NOT NULL,
     customer_address TEXT NOT NULL,
@@ -20,7 +21,10 @@ function ensureOrderSchema(){
     subtotal INT NOT NULL DEFAULT 0,
     shipping_cost INT NOT NULL DEFAULT 0,
     total INT NOT NULL DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    points_earned INT NOT NULL DEFAULT 0,
+    voucher_awarded INT NOT NULL DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    KEY idx_orders_customer_id (customer_id)
   ) ENGINE=InnoDB");
 
   $pdo->exec("CREATE TABLE IF NOT EXISTS order_items (
@@ -50,6 +54,9 @@ function ensureOrderSchema(){
   try{ $pdo->exec("ALTER TABLE orders ADD COLUMN subtotal INT NOT NULL DEFAULT 0"); }catch(Throwable $e){}
   try{ $pdo->exec("ALTER TABLE orders ADD COLUMN shipping_cost INT NOT NULL DEFAULT 0"); }catch(Throwable $e){}
   try{ $pdo->exec("ALTER TABLE orders ADD COLUMN total INT NOT NULL DEFAULT 0"); }catch(Throwable $e){}
+  try{ $pdo->exec("ALTER TABLE orders ADD COLUMN customer_id INT NULL"); }catch(Throwable $e){}
+  try{ $pdo->exec("ALTER TABLE orders ADD COLUMN points_earned INT NOT NULL DEFAULT 0"); }catch(Throwable $e){}
+  try{ $pdo->exec("ALTER TABLE orders ADD COLUMN voucher_awarded INT NOT NULL DEFAULT 0"); }catch(Throwable $e){}
   try{ $pdo->exec("ALTER TABLE order_items ADD COLUMN seller_id INT NULL DEFAULT NULL"); }catch(Throwable $e){}
   try{ $pdo->exec("ALTER TABLE order_items ADD COLUMN seller_name VARCHAR(255) NULL"); }catch(Throwable $e){}
 }
@@ -108,6 +115,98 @@ function ensureSellersSchema(){
   try{ $pdo->exec("ALTER TABLE products ADD INDEX idx_products_seller_id (seller_id)"); }catch(Throwable $e){}
   try{ $pdo->exec("ALTER TABLE products ADD CONSTRAINT fk_products_seller FOREIGN KEY (seller_id) REFERENCES sellers(id) ON DELETE SET NULL"); }catch(Throwable $e){}
   ensureDemoSeller();
+}
+
+function ensureCustomersSchema(){
+  $pdo = getPDO();
+  $pdo->exec("CREATE TABLE IF NOT EXISTS customers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(120) NOT NULL,
+    phone VARCHAR(50) NOT NULL UNIQUE,
+    address TEXT NULL,
+    city VARCHAR(100) NULL,
+    province VARCHAR(100) NULL,
+    postal_code VARCHAR(20) NULL,
+    points_balance INT NOT NULL DEFAULT 0,
+    voucher_count INT NOT NULL DEFAULT 0,
+    last_order_at TIMESTAMP NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  ) ENGINE=InnoDB");
+}
+
+function getCustomerByPhone($phone){
+  ensureCustomersSchema();
+  $pdo = getPDO();
+  $st = $pdo->prepare("SELECT * FROM customers WHERE phone = ? LIMIT 1");
+  $st->execute([trim($phone)]);
+  return $st->fetch();
+}
+
+function upsertCustomerPoints($data, $pointsEarned){
+  ensureCustomersSchema();
+  $pdo = getPDO();
+  $phone = trim($data['phone'] ?? '');
+  if($phone === ''){ throw new RuntimeException('Nomor telepon customer wajib diisi untuk sistem poin.'); }
+  $customer = getCustomerByPhone($phone);
+  $currentPoints = (int)($customer['points_balance'] ?? 0);
+  $currentVouchers = (int)($customer['voucher_count'] ?? 0);
+  $pointsEarned = max(0, (int)$pointsEarned);
+  $newPointsTotal = $currentPoints + $pointsEarned;
+  $earnedVouchers = intdiv($newPointsTotal, 100);
+  $updatedPoints = $newPointsTotal % 100;
+  $updatedVouchers = $currentVouchers + $earnedVouchers;
+  $now = date('Y-m-d H:i:s');
+
+  if($customer){
+    $st = $pdo->prepare("UPDATE customers SET name=?, address=?, city=?, province=?, postal_code=?, points_balance=?, voucher_count=?, last_order_at=? WHERE id=?");
+    $st->execute([
+      trim($data['name'] ?? ''),
+      trim($data['address'] ?? ''),
+      trim($data['city'] ?? ''),
+      trim($data['province'] ?? ''),
+      trim($data['postal_code'] ?? ''),
+      $updatedPoints,
+      $updatedVouchers,
+      $now,
+      $customer['id'],
+    ]);
+    $customer['name'] = trim($data['name'] ?? '');
+    $customer['address'] = trim($data['address'] ?? '');
+    $customer['city'] = trim($data['city'] ?? '');
+    $customer['province'] = trim($data['province'] ?? '');
+    $customer['postal_code'] = trim($data['postal_code'] ?? '');
+    $customer['points_balance'] = $updatedPoints;
+    $customer['voucher_count'] = $updatedVouchers;
+    $customer['voucher_awarded'] = $earnedVouchers;
+    $customer['points_earned'] = $pointsEarned;
+    return $customer;
+  }
+
+  $st = $pdo->prepare("INSERT INTO customers (name, phone, address, city, province, postal_code, points_balance, voucher_count, last_order_at) VALUES (?,?,?,?,?,?,?,?,?)");
+  $st->execute([
+    trim($data['name'] ?? ''),
+    $phone,
+    trim($data['address'] ?? ''),
+    trim($data['city'] ?? ''),
+    trim($data['province'] ?? ''),
+    trim($data['postal_code'] ?? ''),
+    $updatedPoints,
+    $updatedVouchers,
+    $now,
+  ]);
+  return [
+    'id' => (int)$pdo->lastInsertId(),
+    'name' => trim($data['name'] ?? ''),
+    'phone' => $phone,
+    'address' => trim($data['address'] ?? ''),
+    'city' => trim($data['city'] ?? ''),
+    'province' => trim($data['province'] ?? ''),
+    'postal_code' => trim($data['postal_code'] ?? ''),
+    'points_balance' => $updatedPoints,
+    'voucher_count' => $updatedVouchers,
+    'voucher_awarded' => $earnedVouchers,
+    'points_earned' => $pointsEarned,
+  ];
 }
 
 function ensureDemoSeller(){
@@ -257,12 +356,18 @@ function deleteSeller($id){
   $pdo->prepare("UPDATE products SET seller_id = NULL WHERE seller_id=?")->execute([$id]);
   $pdo->prepare("DELETE FROM sellers WHERE id=?")->execute([$id]);
 }
+function calculatePointsFromSubtotal($subtotal){
+  $subtotal = max(0, (int)$subtotal);
+  return (int) floor($subtotal / 10000);
+}
+
 function createOrder($orderData, $items){
   ensureOrderSchema();
   $pdo = getPDO();
-  $st = $pdo->prepare("INSERT INTO orders (order_no, customer_name, customer_phone, customer_address, customer_city, customer_province, customer_postal_code, customer_notes, courier, service, subtotal, shipping_cost, total) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)");
+  $st = $pdo->prepare("INSERT INTO orders (order_no, customer_id, customer_name, customer_phone, customer_address, customer_city, customer_province, customer_postal_code, customer_notes, courier, service, subtotal, shipping_cost, total, points_earned, voucher_awarded) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
   $st->execute([
     $orderData['order_no'],
+    $orderData['customer_id'] ?? null,
     $orderData['customer_name'],
     $orderData['customer_phone'],
     $orderData['customer_address'],
@@ -275,6 +380,8 @@ function createOrder($orderData, $items){
     (int)$orderData['subtotal'],
     (int)$orderData['shipping_cost'],
     (int)$orderData['total'],
+    (int)$orderData['points_earned'],
+    (int)$orderData['voucher_awarded'],
   ]);
   $orderId = (int)$pdo->lastInsertId();
 

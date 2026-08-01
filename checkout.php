@@ -116,6 +116,9 @@ foreach($cart as $item){ $subtotal += $item['price'] * $item['qty']; }
         </div>
       </form>
       <div class="small text-muted mt-2">* Ongkir dihitung sederhana (flat-rate).</div>
+      <div class="alert alert-info small mt-2 mb-0">
+        Belanja minimal Rp 10.000 mendapatkan 1 poin. Kumpulkan 100 poin untuk voucher hadiah eco-friendly.
+      </div>
     </div>
   </div>
 </div>
