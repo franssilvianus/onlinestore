@@ -3,6 +3,19 @@ require_once __DIR__.'/config.php';
 
 function esc($s){ return htmlspecialchars($s, ENT_QUOTES, 'UTF-8'); }
 
+function csrf_token(){
+  if(session_status()===PHP_SESSION_NONE) session_start();
+  if(empty($_SESSION['_csrf_token'])){
+    $_SESSION['_csrf_token'] = bin2hex(random_bytes(16));
+  }
+  return $_SESSION['_csrf_token'];
+}
+
+function csrf_verify($token){
+  if(session_status()===PHP_SESSION_NONE) session_start();
+  return !empty($token) && !empty($_SESSION['_csrf_token']) && hash_equals($_SESSION['_csrf_token'], $token);
+}
+
 function ensureOrderSchema(){
   $pdo = getPDO();
   $pdo->exec("CREATE TABLE IF NOT EXISTS orders (
@@ -134,6 +147,75 @@ function ensureCustomersSchema(){
   ) ENGINE=InnoDB");
 }
 
+function ensureVoucherRedemptionsSchema(){
+  ensureCustomersSchema();
+  $pdo = getPDO();
+  $pdo->exec("CREATE TABLE IF NOT EXISTS voucher_redemptions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT NOT NULL,
+    reward_key VARCHAR(100) NOT NULL,
+    reward_name VARCHAR(255) NOT NULL,
+    voucher_cost INT NOT NULL DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_voucher_redemptions_customer FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE CASCADE
+  ) ENGINE=InnoDB");
+}
+
+function getVoucherRewards(){
+  return [
+    'eco_tote' => [
+      'name' => 'Eco Tote Bag',
+      'description' => 'Tas belanja kain reusable yang ramah lingkungan.',
+      'cost' => 1,
+    ],
+    'reusable_straws' => [
+      'name' => 'Reusable Straw Set',
+      'description' => 'Satu paket sedotan stainless untuk kurangi plastik sekali pakai.',
+      'cost' => 1,
+    ],
+    'seed_bookmark' => [
+      'name' => 'Seed Paper Bookmark',
+      'description' => 'Pembatas buku yang dapat ditanam jadi bunga.',
+      'cost' => 1,
+    ],
+  ];
+}
+
+function getCustomerVoucherRedemptions($customerId, $limit = 20){
+  ensureVoucherRedemptionsSchema();
+  $pdo = getPDO();
+  $st = $pdo->prepare("SELECT * FROM voucher_redemptions WHERE customer_id = ? ORDER BY id DESC LIMIT ?");
+  $st->bindValue(1, (int)$customerId, PDO::PARAM_INT);
+  $st->bindValue(2, (int)$limit, PDO::PARAM_INT);
+  $st->execute();
+  return $st->fetchAll();
+}
+
+function redeemCustomerVoucher($customerId, $rewardKey){
+  ensureVoucherRedemptionsSchema();
+  $rewards = getVoucherRewards();
+  if(!isset($rewards[$rewardKey])){
+    throw new RuntimeException('Hadiah pilihan tidak valid.');
+  }
+  $reward = $rewards[$rewardKey];
+  $customer = getCustomerById($customerId);
+  if(!$customer){
+    throw new RuntimeException('Pelanggan tidak ditemukan.');
+  }
+  if($customer['voucher_count'] < $reward['cost']){
+    throw new RuntimeException('Voucher pelanggan tidak cukup untuk penukaran ini.');
+  }
+  $pdo = getPDO();
+  $st = $pdo->prepare("UPDATE customers SET voucher_count = voucher_count - ? WHERE id = ?");
+  $st->execute([(int)$reward['cost'], (int)$customerId]);
+  $st = $pdo->prepare("INSERT INTO voucher_redemptions (customer_id, reward_key, reward_name, voucher_cost) VALUES (?,?,?,?)");
+  $st->execute([$customerId, $rewardKey, $reward['name'], (int)$reward['cost']]);
+  $customer = getCustomerById($customerId);
+  $customer['reward_name'] = $reward['name'];
+  $customer['remaining_vouchers'] = $customer['voucher_count'];
+  return $customer;
+}
+
 function getCustomerByPhone($phone){
   ensureCustomersSchema();
   $pdo = getPDO();
@@ -148,6 +230,12 @@ function getCustomerById($id){
   $st = $pdo->prepare("SELECT * FROM customers WHERE id = ? LIMIT 1");
   $st->execute([(int)$id]);
   return $st->fetch();
+}
+
+function getCustomers(){
+  ensureCustomersSchema();
+  $pdo = getPDO();
+  return $pdo->query("SELECT * FROM customers ORDER BY id DESC")->fetchAll();
 }
 
 function updateCustomerById($id, $data){
