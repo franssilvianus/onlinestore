@@ -1,4 +1,4 @@
-<?php include 'header.php'; $sellerFilter = isset($_GET['seller_id']) ? (int)$_GET['seller_id'] : 0; $sellers = getSellers(); $products = getProducts($sellerFilter > 0 ? $sellerFilter : null); ?>
+<?php include 'header.php'; $sellerFilter = isset($_GET['seller_id']) ? (int)$_GET['seller_id'] : 0; $searchQuery = trim($_GET['q'] ?? ''); $sellers = getSellers(); $products = getProducts($sellerFilter > 0 ? $sellerFilter : null); if($searchQuery !== ''){ $needle = mb_strtolower($searchQuery); $products = array_values(array_filter($products, function($product) use ($needle){ $haystack = mb_strtolower((string)($product['name'] ?? '') . ' ' . (string)($product['description'] ?? '') . ' ' . (string)($product['seller_name'] ?? '')); return strpos($haystack, $needle) !== false; })); } ?>
 
 <!-- Rebelstuff Hero -->
 <section class="mb-5">
@@ -250,7 +250,15 @@
       <h3 class="mb-1">Pilih Produk Daur Ulang</h3>
       <p class="text-muted mb-0">Temukan item favorit Anda yang dibuat dengan nilai estetika, kualitas, dan tanggung jawab lingkungan.</p>
     </div>
-    <div class="d-flex flex-wrap gap-2">
+    <div class="d-flex flex-wrap gap-2 align-items-center">
+      <form method="get" class="d-flex flex-wrap gap-2 align-items-center">
+        <input type="hidden" name="seller_id" value="<?php echo (int)$sellerFilter; ?>">
+        <input type="text" name="q" class="form-control form-control-sm" style="min-width:220px;" placeholder="Cari produk..." value="<?php echo esc($searchQuery); ?>">
+        <button type="submit" class="btn btn-sm btn-success">Cari</button>
+        <?php if($searchQuery !== ''): ?>
+          <a href="index.php<?php echo $sellerFilter > 0 ? '?seller_id=' . (int)$sellerFilter . '#shop' : '#shop'; ?>" class="btn btn-sm btn-outline-secondary">Reset</a>
+        <?php endif; ?>
+      </form>
       <a class="btn btn-sm <?php echo $sellerFilter > 0 ? 'btn-outline-success' : 'btn-success'; ?>" href="index.php#shop">Semua Seller</a>
       <?php foreach($sellers as $seller): ?>
         <!-- <a class="btn btn-sm <?php echo $sellerFilter === (int)$seller['id'] ? 'btn-success' : 'btn-outline-success'; ?>" href="index.php?seller_id=<?php echo (int)$seller['id']; ?>#shop">
