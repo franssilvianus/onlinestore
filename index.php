@@ -272,7 +272,16 @@
   <div class="row g-3">
   <?php if(!$products): ?>
     <div class="col-12">
-      <div class="alert alert-info">Belum ada produk. <a href="admin/products.php">Tambah sekarang</a>.</div>
+      <div class="alert alert-info d-flex align-items-center gap-2" style="border-radius:14px;">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <span>
+          <?php if($searchQuery !== ''): ?>
+            Tidak ada produk yang cocok dengan pencarian “<?php echo esc($searchQuery); ?>”.
+          <?php else: ?>
+            Belum ada produk. <a href="admin/products.php">Tambah sekarang</a>.
+          <?php endif; ?>
+        </span>
+      </div>
     </div>
   <?php else: foreach($products as $p): ?>
     <div class="col-12 col-sm-6 col-lg-4">
