@@ -479,16 +479,38 @@ function ensureDemoSeller(){
     ]);
 }
 
-function getProducts($sellerId = null){
+function getProducts($sellerId = null, $searchQuery = null){
   ensureProductsSchema();
   ensureSellersSchema();
   $pdo = getPDO();
+
+  $where = [];
+  $params = [];
+
   if($sellerId !== null && $sellerId !== ''){
-    $st = $pdo->prepare("SELECT p.*, s.name AS seller_name FROM products p LEFT JOIN sellers s ON s.id = p.seller_id WHERE p.seller_id = ? ORDER BY p.id DESC");
-    $st->execute([(int)$sellerId]);
-    return $st->fetchAll();
+    $where[] = 'p.seller_id = ?';
+    $params[] = (int)$sellerId;
   }
-  return $pdo->query("SELECT p.*, s.name AS seller_name FROM products p LEFT JOIN sellers s ON s.id = p.seller_id ORDER BY p.id DESC")->fetchAll();
+
+  $searchTerm = trim((string)$searchQuery);
+  if($searchTerm !== ''){
+    $escaped = str_replace(['%', '_'], ['\\%', '\\_'], $searchTerm);
+    $pattern = '%' . strtolower($escaped) . '%';
+    $where[] = '(LOWER(p.name) LIKE ? OR LOWER(p.description) LIKE ? OR LOWER(s.name) LIKE ?)';
+    $params[] = $pattern;
+    $params[] = $pattern;
+    $params[] = $pattern;
+  }
+
+  $sql = 'SELECT p.*, s.name AS seller_name FROM products p LEFT JOIN sellers s ON s.id = p.seller_id';
+  if($where){
+    $sql .= ' WHERE ' . implode(' AND ', $where);
+  }
+  $sql .= ' ORDER BY p.id DESC';
+
+  $st = $pdo->prepare($sql);
+  $st->execute($params);
+  return $st->fetchAll();
 }
 function getProduct($id){
   ensureProductsSchema();
