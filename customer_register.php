@@ -6,11 +6,24 @@ $error = '';
 $next = trim($_GET['next'] ?? ($_POST['next'] ?? 'checkout.php'));
 if($_SERVER['REQUEST_METHOD'] === 'POST'){
   $phone = trim($_POST['phone'] ?? '');
+  $name = trim($_POST['name'] ?? '');
   if($phone === ''){
     $error = 'Nomor WA/HP wajib diisi.';
+  } elseif($name === ''){
+    $error = 'Nama lengkap wajib diisi.';
   } else {
     $customer = getCustomerByPhone($phone);
     if($customer){
+      $error = 'Nomor sudah terdaftar. Silakan login.';
+    } else {
+      $customer = upsertCustomerPoints([
+        'name' => $name,
+        'phone' => $phone,
+        'address' => '',
+        'city' => '',
+        'province' => '',
+        'postal_code' => '',
+      ], 0);
       $_SESSION['customer_id'] = (int)$customer['id'];
       $_SESSION['customer_name'] = $customer['name'];
       $_SESSION['customer_phone'] = $customer['phone'];
@@ -22,7 +35,6 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
       $_SESSION['customer_voucher_count'] = (int)$customer['voucher_count'];
       header('Location: '.($next ?: 'checkout.php')); exit;
     }
-    $error = 'Nomor belum terdaftar. Silakan daftar terlebih dahulu.';
   }
 }
 include 'header.php';
@@ -30,23 +42,24 @@ include 'header.php';
 <div class="row justify-content-center">
   <div class="col-md-6 col-lg-5">
     <div class="card p-4">
-      <h3 class="mb-3">Login Pelanggan</h3>
+      <h3 class="mb-3">Daftar Pelanggan</h3>
       <?php if($error): ?><div class="alert alert-danger"><?php echo esc($error); ?></div><?php endif; ?>
-      <div class="alert alert-info">Masukkan nomor WA/HP untuk masuk. Jika belum punya akun, daftar dulu.</div>
       <form method="post">
         <input type="hidden" name="next" value="<?php echo esc($next); ?>">
         <div class="mb-3">
+          <label class="form-label">Nama Lengkap</label>
+          <input type="text" name="name" class="form-control" required autofocus value="<?php echo esc($_POST['name'] ?? ''); ?>">
+        </div>
+        <div class="mb-3">
           <label class="form-label">No. HP / WA</label>
-          <input type="tel" name="phone" class="form-control" required autofocus>
+          <input type="tel" name="phone" class="form-control" required value="<?php echo esc($_POST['phone'] ?? ''); ?>">
+          <div class="form-text">Nomor ini akan digunakan untuk login dan menampilkan poin.</div>
         </div>
         <div class="d-flex justify-content-between align-items-center">
-          <a href="index.php" class="btn btn-outline-secondary">Kembali</a>
-          <button class="btn btn-primary">Masuk</button>
+          <a href="customer_login.php?next=<?php echo urlencode($next); ?>" class="btn btn-outline-secondary">Sudah Punya Akun?</a>
+          <button class="btn btn-primary">Daftar</button>
         </div>
       </form>
-      <div class="mt-3 small text-muted">
-        Belum punya akun? <a href="customer_register.php?next=<?php echo urlencode($next); ?>">Daftar di sini</a>.
-      </div>
     </div>
   </div>
 </div>

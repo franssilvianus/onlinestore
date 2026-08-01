@@ -482,7 +482,8 @@ require_once __DIR__ . '/functions.php';
             <li class="nav-item"><a class="nav-link" href="<?php echo $BASE_PATH; ?>account.php"><i class="fa fa-user"></i> Akun</a></li>
             <li class="nav-item"><a class="nav-link" href="<?php echo $BASE_PATH; ?>customer_logout.php">Logout</a></li>
           <?php else: ?>
-            <li class="nav-item"><a class="nav-link" href="<?php echo $BASE_PATH; ?>customer_login.php">Login Pelanggan</a></li>
+            <li class="nav-item"><a class="nav-link" href="<?php echo $BASE_PATH; ?>customer_login.php">Login</a></li>
+            <li class="nav-item"><a class="nav-link" href="<?php echo $BASE_PATH; ?>customer_register.php">Daftar</a></li>
           <?php endif; ?>
           <?php if (!empty($_SESSION['is_admin'])): ?>
             <li class="nav-item"><a class="nav-link" href="<?php echo $BASE_PATH; ?>admin/logout.php">Logout</a></li>
