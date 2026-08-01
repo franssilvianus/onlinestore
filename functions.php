@@ -142,6 +142,29 @@ function getCustomerByPhone($phone){
   return $st->fetch();
 }
 
+function getCustomerById($id){
+  ensureCustomersSchema();
+  $pdo = getPDO();
+  $st = $pdo->prepare("SELECT * FROM customers WHERE id = ? LIMIT 1");
+  $st->execute([(int)$id]);
+  return $st->fetch();
+}
+
+function updateCustomerById($id, $data){
+  ensureCustomersSchema();
+  $pdo = getPDO();
+  $st = $pdo->prepare("UPDATE customers SET name=?, address=?, city=?, province=?, postal_code=? WHERE id=?");
+  $st->execute([
+    trim($data['name'] ?? ''),
+    trim($data['address'] ?? ''),
+    trim($data['city'] ?? ''),
+    trim($data['province'] ?? ''),
+    trim($data['postal_code'] ?? ''),
+    (int)$id,
+  ]);
+  return getCustomerById($id);
+}
+
 function upsertCustomerPoints($data, $pointsEarned){
   ensureCustomersSchema();
   $pdo = getPDO();

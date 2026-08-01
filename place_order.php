@@ -1,5 +1,8 @@
 <?php
 include 'header.php';
+if(empty($_SESSION['customer_id'])){
+  header('Location: customer_login.php?next=checkout.php'); exit;
+}
 $cart = $_SESSION['cart'] ?? [];
 if(!$cart){
   echo '<div class="alert alert-info">Keranjang kosong. <a href="index.php">Belanja dulu</a>.</div>';
@@ -29,13 +32,21 @@ $orderNo = 'INV'.date('YmdHis').rand(100,999);
 $pointsEarned = calculatePointsFromSubtotal($subtotal);
 $customerData = [
   'name' => $_POST['full_name'],
-  'phone' => $_POST['phone'],
+  'phone' => $_SESSION['customer_phone'] ?? $_POST['phone'],
   'address' => $_POST['address'],
   'city' => $_POST['city'],
   'province' => $_POST['province'],
   'postal_code' => $_POST['postal_code'],
 ];
 $customerInfo = upsertCustomerPoints($customerData, $pointsEarned);
+$_SESSION['customer_name'] = $customerInfo['name'];
+$_SESSION['customer_phone'] = $customerInfo['phone'];
+$_SESSION['customer_address'] = $customerInfo['address'];
+$_SESSION['customer_city'] = $customerInfo['city'];
+$_SESSION['customer_province'] = $customerInfo['province'];
+$_SESSION['customer_postal_code'] = $customerInfo['postal_code'];
+$_SESSION['customer_points_balance'] = $customerInfo['points_balance'];
+$_SESSION['customer_voucher_count'] = $customerInfo['voucher_count'];
 
 $lastOrder = [
   'order_no' => $orderNo,
@@ -64,9 +75,9 @@ $_SESSION['last_order'] = $lastOrder;
 
 createOrder([
   'order_no' => $orderNo,
-  'customer_id' => $customerInfo['id'] ?? null,
+  'customer_id' => $_SESSION['customer_id'] ?? ($customerInfo['id'] ?? null),
   'customer_name' => $_POST['full_name'],
-  'customer_phone' => $_POST['phone'],
+  'customer_phone' => $_SESSION['customer_phone'] ?? $_POST['phone'],
   'customer_address' => $_POST['address'],
   'customer_city' => $_POST['city'],
   'customer_province' => $_POST['province'],

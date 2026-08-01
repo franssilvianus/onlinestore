@@ -43,7 +43,11 @@ $total = 0; ?>
     <div>
       <span class="me-3 fw-bold fs-5">Total: <?php echo formatRupiah($total); ?></span>
       <button class="btn btn-primary">Update Keranjang</button>
-      <a class="btn btn-success" href="checkout.php">Checkout</a>
+      <?php if(!empty($_SESSION['customer_id'])): ?>
+        <a class="btn btn-success" href="checkout.php">Checkout</a>
+      <?php else: ?>
+        <a class="btn btn-warning" href="customer_login.php?next=checkout.php">Login untuk Checkout</a>
+      <?php endif; ?>
     </div>
   </div>
 </form>

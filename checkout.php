@@ -1,5 +1,8 @@
 <?php
 include 'header.php';
+if(empty($_SESSION['customer_id'])){
+  header('Location: customer_login.php?next=checkout.php'); exit;
+}
 $cart = $_SESSION['cart'] ?? [];
 if(!$cart){
   echo '<div class="alert alert-info">Keranjang kosong. <a href="index.php">Belanja dulu</a>.</div>';
@@ -7,6 +10,14 @@ if(!$cart){
 }
 $subtotal = 0;
 foreach($cart as $item){ $subtotal += $item['price'] * $item['qty']; }
+$customerName = $_SESSION['customer_name'] ?? '';
+$customerPhone = $_SESSION['customer_phone'] ?? '';
+$customerAddress = $_SESSION['customer_address'] ?? '';
+$customerCity = $_SESSION['customer_city'] ?? '';
+$customerProvince = $_SESSION['customer_province'] ?? '';
+$customerPostal = $_SESSION['customer_postal_code'] ?? '';
+$customerPoints = $_SESSION['customer_points_balance'] ?? 0;
+$customerVouchers = $_SESSION['customer_voucher_count'] ?? 0;
 ?>
 <div class="row g-3 align-items-start">
   <div class="col-lg-7">
@@ -58,15 +69,16 @@ foreach($cart as $item){ $subtotal += $item['price'] * $item['qty']; }
       <form method="post" action="place_order.php" novalidate>
         <div class="mb-2">
           <label class="form-label">Nama Lengkap</label>
-          <input type="text" class="form-control" name="full_name" required>
+          <input type="text" class="form-control" name="full_name" required value="<?php echo esc($customerName); ?>">
         </div>
         <div class="mb-2">
           <label class="form-label">No. HP / WA</label>
-          <input type="tel" class="form-control" name="phone" required>
+          <input type="tel" class="form-control" name="phone" required value="<?php echo esc($customerPhone); ?>" readonly>
+          <div class="form-text">Nomor telepon digunakan sebagai identitas pelanggan.</div>
         </div>
         <div class="mb-2">
           <label class="form-label">Alamat Lengkap</label>
-          <textarea class="form-control" name="address" rows="3" required></textarea>
+          <textarea class="form-control" name="address" rows="3" required><?php echo esc($customerAddress); ?></textarea>
         </div>
         <div class="row g-2">
           <div class="col-md-6">
@@ -116,8 +128,11 @@ foreach($cart as $item){ $subtotal += $item['price'] * $item['qty']; }
         </div>
       </form>
       <div class="small text-muted mt-2">* Ongkir dihitung sederhana (flat-rate).</div>
+      <div class="alert alert-success small mt-2 mb-0">
+        Halo <?php echo esc($customerName ?: 'Pelanggan'); ?>, poin kamu saat ini <strong><?php echo (int)$customerPoints; ?></strong> dan voucher terkumpul <strong><?php echo (int)$customerVouchers; ?></strong>.
+      </div>
       <div class="alert alert-info small mt-2 mb-0">
-        Belanja minimal Rp 10.000 mendapatkan 1 poin. Kumpulkan 100 poin untuk voucher hadiah eco-friendly.
+        Belanja minimal Rp 10.000 mendapatkan 1 poin. 100 poin bisa ditukar dengan hadiah eco-friendly di halaman akun.
       </div>
     </div>
   </div>
