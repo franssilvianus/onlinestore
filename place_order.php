@@ -146,7 +146,7 @@ $waLink = 'https://api.whatsapp.com/send/?phone='.$phoneAdmin.'&text='.rawurlenc
         <?php if((int)$pointsEarned === 0): ?>
           <div class="small">Pesanan ini belum mencapai Rp 10.000 untuk mendapat 1 poin. Tambahkan belanja lebih dari Rp 10.000.</div>
         <?php endif; ?>
-        <small>Setiap 10.000 belanja = 1 poin. 100 poin ditukar menjadi hadiah eco-friendly.</small>
+        <small>Setiap 10.000 belanja = 1 poin. 5 poin ditukar menjadi hadiah eco-friendly.</small>
       </div>
     </div>
   </div>

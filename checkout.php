@@ -132,7 +132,7 @@ $customerVouchers = $_SESSION['customer_voucher_count'] ?? 0;
         Halo <?php echo esc($customerName ?: 'Pelanggan'); ?>, poin kamu saat ini <strong><?php echo (int)$customerPoints; ?></strong> dan voucher terkumpul <strong><?php echo (int)$customerVouchers; ?></strong>.
       </div>
       <div class="alert alert-info small mt-2 mb-0">
-        Belanja minimal Rp 10.000 mendapatkan 1 poin. 100 poin bisa ditukar dengan hadiah eco-friendly di halaman akun.
+        Belanja minimal Rp 10.000 mendapatkan 1 poin. 5 poin bisa ditukar menjadi voucher eco-friendly di halaman akun.
       </div>
     </div>
   </div>

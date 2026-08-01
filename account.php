@@ -75,7 +75,7 @@ include 'header.php';
       <?php if(!empty($error)): ?><div class="alert alert-danger"><?php echo esc($error); ?></div><?php endif; ?>
       <div class="alert alert-info">
         <p class="mb-1"><strong>Aturan Poin:</strong></p>
-        <p class="mb-0">Belanja minimal Rp 10.000 = 1 poin. 100 poin otomatis jadi 1 voucher eco-friendly.</p>
+        <p class="mb-0">Belanja minimal Rp 10.000 = 1 poin. 5 poin otomatis jadi 1 voucher eco-friendly.</p>
       </div>
       <div class="alert alert-success">
         <p class="mb-2"><strong>Tukar Voucher</strong></p>
@@ -98,7 +98,7 @@ include 'header.php';
           </form>
           <div class="small mt-2">Voucher tersisa: <strong><?php echo (int)$customer['voucher_count']; ?></strong></div>
         <?php else: ?>
-          <div class="small">Kamu belum punya voucher untuk ditukar. Kumpulkan 100 poin dulu.</div>
+          <div class="small">Kamu belum punya voucher untuk ditukar. Kumpulkan 5 poin dulu.</div>
         <?php endif; ?>
       </div>
       <?php if($redemptions): ?>

@@ -147,6 +147,19 @@ function ensureCustomersSchema(){
   ) ENGINE=InnoDB");
 }
 
+function ensureVoucherRewardsSchema(){
+  $pdo = getPDO();
+  $pdo->exec("CREATE TABLE IF NOT EXISTS voucher_rewards (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    reward_key VARCHAR(100) NOT NULL UNIQUE,
+    name VARCHAR(255) NOT NULL,
+    description TEXT NULL,
+    voucher_cost INT NOT NULL DEFAULT 1,
+    is_active TINYINT(1) NOT NULL DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  ) ENGINE=InnoDB");
+}
+
 function ensureVoucherRedemptionsSchema(){
   ensureCustomersSchema();
   $pdo = getPDO();
@@ -161,24 +174,106 @@ function ensureVoucherRedemptionsSchema(){
   ) ENGINE=InnoDB");
 }
 
-function getVoucherRewards(){
-  return [
-    'eco_tote' => [
-      'name' => 'Eco Tote Bag',
-      'description' => 'Tas belanja kain reusable yang ramah lingkungan.',
-      'cost' => 1,
-    ],
-    'reusable_straws' => [
-      'name' => 'Reusable Straw Set',
-      'description' => 'Satu paket sedotan stainless untuk kurangi plastik sekali pakai.',
-      'cost' => 1,
-    ],
-    'seed_bookmark' => [
-      'name' => 'Seed Paper Bookmark',
-      'description' => 'Pembatas buku yang dapat ditanam jadi bunga.',
-      'cost' => 1,
-    ],
+function seedDefaultVoucherRewards(){
+  ensureVoucherRewardsSchema();
+  $pdo = getPDO();
+  $count = (int)$pdo->query('SELECT COUNT(*) FROM voucher_rewards')->fetchColumn();
+  if($count > 0){
+    return;
+  }
+  $defaults = [
+    ['reward_key' => 'eco_tote', 'name' => 'Eco Tote Bag', 'description' => 'Tas belanja kain reusable yang ramah lingkungan.', 'voucher_cost' => 1],
+    ['reward_key' => 'reusable_straws', 'name' => 'Reusable Straw Set', 'description' => 'Satu paket sedotan stainless untuk kurangi plastik sekali pakai.', 'voucher_cost' => 1],
+    ['reward_key' => 'seed_bookmark', 'name' => 'Seed Paper Bookmark', 'description' => 'Pembatas buku yang dapat ditanam jadi bunga.', 'voucher_cost' => 1],
   ];
+  $st = $pdo->prepare('INSERT INTO voucher_rewards (reward_key, name, description, voucher_cost) VALUES (?,?,?,?)');
+  foreach($defaults as $reward){
+    $st->execute([$reward['reward_key'], $reward['name'], $reward['description'], $reward['voucher_cost']]);
+  }
+}
+
+function getVoucherRewards($activeOnly = true){
+  ensureVoucherRewardsSchema();
+  seedDefaultVoucherRewards();
+  $pdo = getPDO();
+  if($activeOnly){
+    $st = $pdo->prepare('SELECT * FROM voucher_rewards WHERE is_active = 1 ORDER BY id ASC');
+    $st->execute();
+  } else {
+    $st = $pdo->query('SELECT * FROM voucher_rewards ORDER BY id ASC');
+  }
+  $rows = $st->fetchAll();
+  $rewards = [];
+  foreach($rows as $row){
+    $rewards[$row['reward_key']] = [
+      'id' => (int)$row['id'],
+      'reward_key' => $row['reward_key'],
+      'name' => $row['name'],
+      'description' => $row['description'],
+      'cost' => (int)$row['voucher_cost'],
+      'is_active' => (bool)$row['is_active'],
+    ];
+  }
+  return $rewards;
+}
+
+function getVoucherRewardByKey($rewardKey){
+  ensureVoucherRewardsSchema();
+  $pdo = getPDO();
+  $st = $pdo->prepare('SELECT * FROM voucher_rewards WHERE reward_key = ? LIMIT 1');
+  $st->execute([trim($rewardKey)]);
+  return $st->fetch();
+}
+
+function getVoucherRewardById($id){
+  ensureVoucherRewardsSchema();
+  $pdo = getPDO();
+  $st = $pdo->prepare('SELECT * FROM voucher_rewards WHERE id = ? LIMIT 1');
+  $st->execute([(int)$id]);
+  return $st->fetch();
+}
+
+function getAllVoucherRewards($limit = 100){
+  ensureVoucherRewardsSchema();
+  $pdo = getPDO();
+  return $pdo->query('SELECT * FROM voucher_rewards ORDER BY id DESC LIMIT '.(int)$limit)->fetchAll();
+}
+
+function addVoucherReward($data){
+  ensureVoucherRewardsSchema();
+  $pdo = getPDO();
+  $key = trim($data['reward_key'] ?? '');
+  if($key === ''){ throw new RuntimeException('Kode reward wajib diisi.'); }
+  $st = $pdo->prepare('INSERT INTO voucher_rewards (reward_key, name, description, voucher_cost, is_active) VALUES (?,?,?,?,?)');
+  $st->execute([
+    $key,
+    trim($data['name'] ?? ''),
+    trim($data['description'] ?? ''),
+    max(1, (int)($data['voucher_cost'] ?? 1)),
+    !empty($data['is_active']) ? 1 : 0,
+  ]);
+  return $pdo->lastInsertId();
+}
+
+function updateVoucherReward($id, $data){
+  ensureVoucherRewardsSchema();
+  $pdo = getPDO();
+  $st = $pdo->prepare('UPDATE voucher_rewards SET reward_key = ?, name = ?, description = ?, voucher_cost = ?, is_active = ? WHERE id = ?');
+  $st->execute([
+    trim($data['reward_key'] ?? ''),
+    trim($data['name'] ?? ''),
+    trim($data['description'] ?? ''),
+    max(1, (int)($data['voucher_cost'] ?? 1)),
+    !empty($data['is_active']) ? 1 : 0,
+    (int)$id,
+  ]);
+}
+
+function deleteVoucherReward($id){
+  ensureVoucherRewardsSchema();
+  $pdo = getPDO();
+  $st = $pdo->prepare('DELETE FROM voucher_rewards WHERE id = ?');
+  $st->execute([(int)$id]);
 }
 
 function getCustomerVoucherRedemptions($customerId, $limit = 20){
@@ -193,27 +288,23 @@ function getCustomerVoucherRedemptions($customerId, $limit = 20){
 
 function redeemCustomerVoucher($customerId, $rewardKey){
   ensureVoucherRedemptionsSchema();
-  $rewards = getVoucherRewards();
-  if(!isset($rewards[$rewardKey])){
-    throw new RuntimeException('Hadiah pilihan tidak valid.');
+  $reward = getVoucherRewardByKey($rewardKey);
+  if(!$reward || !$reward['is_active']){
+    throw new RuntimeException('Hadiah pilihan tidak valid atau tidak aktif.');
   }
-  $reward = $rewards[$rewardKey];
   $customer = getCustomerById($customerId);
   if(!$customer){
     throw new RuntimeException('Pelanggan tidak ditemukan.');
   }
-  if($customer['voucher_count'] < $reward['cost']){
+  if($customer['voucher_count'] < (int)$reward['voucher_cost']){
     throw new RuntimeException('Voucher pelanggan tidak cukup untuk penukaran ini.');
   }
   $pdo = getPDO();
   $st = $pdo->prepare("UPDATE customers SET voucher_count = voucher_count - ? WHERE id = ?");
-  $st->execute([(int)$reward['cost'], (int)$customerId]);
+  $st->execute([(int)$reward['voucher_cost'], (int)$customerId]);
   $st = $pdo->prepare("INSERT INTO voucher_redemptions (customer_id, reward_key, reward_name, voucher_cost) VALUES (?,?,?,?)");
-  $st->execute([$customerId, $rewardKey, $reward['name'], (int)$reward['cost']]);
-  $customer = getCustomerById($customerId);
-  $customer['reward_name'] = $reward['name'];
-  $customer['remaining_vouchers'] = $customer['voucher_count'];
-  return $customer;
+  $st->execute([$customerId, $reward['reward_key'], $reward['name'], (int)$reward['voucher_cost']]);
+  return getCustomerById($customerId);
 }
 
 function getCustomerByPhone($phone){
@@ -274,8 +365,8 @@ function upsertCustomerPoints($data, $pointsEarned, $customerId = null){
   $currentVouchers = (int)($customer['voucher_count'] ?? 0);
   $pointsEarned = max(0, (int)$pointsEarned);
   $newPointsTotal = $currentPoints + $pointsEarned;
-  $earnedVouchers = intdiv($newPointsTotal, 100);
-  $updatedPoints = $newPointsTotal % 100;
+  $earnedVouchers = intdiv($newPointsTotal, 5);
+  $updatedPoints = $newPointsTotal % 5;
   $updatedVouchers = $currentVouchers + $earnedVouchers;
   $now = date('Y-m-d H:i:s');
 

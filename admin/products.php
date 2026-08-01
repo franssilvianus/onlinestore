@@ -28,7 +28,7 @@ try{
   <h3>Produk (Admin)</h3>
   <div class="d-flex gap-2">
     <a href="sellers.php" class="btn btn-outline-secondary"><i class="fa fa-store"></i> Kelola Seller</a>
-    <a href="vouchers.php" class="btn btn-outline-success"><i class="fa fa-gift"></i> Tukar Voucher</a>
+    <a href="voucher_rewards.php" class="btn btn-outline-success"><i class="fa fa-gift"></i> Kelola Reward Voucher</a>
     <a href="products.php?action=new" class="btn btn-primary"><i class="fa fa-plus"></i> Produk Baru</a>
   </div>
 </div>
